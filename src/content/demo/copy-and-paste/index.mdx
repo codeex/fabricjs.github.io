@@ -1,0 +1,32 @@
+---
+date: '2017-08-29'
+title: '复制和粘贴'
+description: '用 FabricJS 演示复制和粘贴'
+thumbnail: 'copy-paste.png'
+tags: ['剪贴板', '复制', '粘贴', '文本']
+---
+
+import { CodeEditor } from '../../../components/CodeEditor';
+import code from './code?raw';
+
+FabricJS 的嵌入式序列化属性足够用于实现类似剪贴板的功能。当你想复制一个对象时，只需将该对象的克隆副本存储到你选择的目标位置，例如：
+
+```js
+const copy = await activeObject.clone();
+```
+
+你也可以选择利用序列化，将 `activeObject.toObject()` 的结果存储到剪贴板中，然后使用 `fromObject` 方法恢复它。除非你需要处理某种无法传输实例的机制，否则两种方法的选择只是偏好问题。
+这两种方法都通过在复制和粘贴时克隆对象来防止更改原始对象，这样你可以进行多次复制并更改原始对象和后续副本，而不必担心剪贴板内容被更改。
+
+<div className="flex pt-5">
+  <div className="flex-initial w-56">
+    <button id="copy" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">复制选择的对象</button>
+  </div>
+  <div className="flex-initial w-56">
+    <button id="paste" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">粘贴选择的对象</button>
+  </div>
+</div>
+<CodeEditor code={code} canvasId="test1" client:idle>
+    <canvas  width="600" height="500" id="test1"></canvas>
+</CodeEditor>
+

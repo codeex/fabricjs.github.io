@@ -1,0 +1,14 @@
+---
+date: '2013-03-15'
+title: '剪切和遮罩'
+description: '用 FabricJS 演示 剪切和遮罩'
+thumbnail: 'clipping.png'
+tags: ['剪切', '遮罩', '动画']
+---
+
+import { CodeEditor } from '../../../components/CodeEditor';
+import code from './code?raw';
+
+<CodeEditor code={code} canvasId="test1" client:idle>
+    <canvas  width="600" height="500" id="test1"></canvas>
+</CodeEditor>

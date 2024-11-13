@@ -1,0 +1,60 @@
+---
+import './features.css';
+
+const leftFeatures = [
+	{
+		title: '文本编辑',
+		description: '在Canvas上自由排版，具有丰富的样式、输入法和曲线支持',
+	},
+	{
+		title: '复杂路径',
+		description: '支持上百个简单路径组成的复杂SVG路径',
+	},
+	{
+		title: '图像滤镜',
+		description: '可自定义组合图像滤镜',
+	},
+	{
+		title: '动画效果',
+		description: '支持位置、变换和样式定义的动画补间和运动',
+	},
+	{
+		title: '剪辑路径',
+		description: '支持剪切区域，无论是对象、组',
+	},
+	{
+		title: '灵活控制',
+		description: '可自由定义缩放、旋转、倾斜，以及其他控制API',
+	},
+	{
+		title: 'Typescript 支持',
+		description: '纯TypeScript编写，轻松调试',
+	},
+	{
+		title: '对象分组',
+		description: '支持多个对象的分组选择、变换',
+	},
+	{
+		title: '视角变换',
+		description: '高性能，轻松支持缩放，移动',
+	},
+	{
+		title: '对象缓存',
+		description: '强大的缓存系统，用于快速绘制复杂路径和图像',
+	},
+];
+---
+
+<section id="features">
+	<h2>Fabric.js 特性展示</h2>
+	<div class="container">
+		{
+			leftFeatures.map((feature, index) => (
+				<div class="grid-item">
+					<h3>{feature.title}</h3>
+					<p>{feature.description}</p>
+				</div>
+			))
+		}
+	</div>
+</section>

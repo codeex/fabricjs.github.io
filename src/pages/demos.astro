@@ -1,0 +1,34 @@
+---
+import { getCollection } from 'astro:content';
+import Layout from '../layouts/Layout.astro';
+import ThumbnailList from '../components/ThumbnailList/index.astro';
+import ThumbnailCard from '../components/ThumbnailCard/index.astro';
+const collectionName = 'demo';
+const demoEntries = await getCollection(collectionName);
+const images = import.meta.glob<{ default: ImageMetadata }>(
+	'/src/content/demo/**/*.{jpeg,jpg,png,gif}'
+);
+---
+
+<Layout title="FabricJS 演示集">
+	<main class="darkBg">
+		<h1>FabricJS Demos</h1>
+		<ThumbnailList>
+			{
+				demoEntries.map(({ data, id, slug }) => {
+					const imgFullPath = `/src/content/${collectionName}/${id.replace(/index\.mdx?/, data.thumbnail)}`;
+					return (
+						<li>
+							<ThumbnailCard
+								title={data.title}
+								description={data.description}
+								linkToUrlSlug={`/demos/${slug}`}
+								imgSrc={images[imgFullPath]()}
+							/>
+						</li>
+					);
+				})
+			}
+		</ThumbnailList>
+	</main>
+</Layout>
