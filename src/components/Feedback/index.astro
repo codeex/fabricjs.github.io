@@ -1,0 +1,75 @@
+---
+const pathname = decodeURIComponent(Astro.url.pathname || ''); //解码
+const postName = pathname?.split('/').pop();
+
+const giscusConfig = {
+	repo: 'codeex/fabricjs-likes', // 您的 GitHub 仓库
+	repoId: 'R_kgDONRhaag', // 仓库 ID
+	category: 'General', // GitHub Discussions 分类
+	categoryId: 'DIC_kwDONRhaas4CkZTp', // 分类 ID
+	mapping: 'url', // 按页面 URL 映射评论
+	reactionsEnabled: '1', // 启用点赞功能
+};
+---
+
+<meta
+	data-giscus_repo={giscusConfig.repo}
+	data-giscus_repo_id={giscusConfig.repoId}
+	data-giscus_category_id={giscusConfig.categoryId}
+	data-giscus_lang="zh-CN"
+	id="giscus-meta"
+/>
+<meta property={`og:${postName}`} />
+<script>
+	const {
+		giscus_repo = '',
+		giscus_repo_id = '',
+		giscus_category_id = '',
+		giscus_lang,
+	} = (document.querySelector('#giscus-meta') as HTMLAnchorElement).dataset;
+
+	function sendMessage(message: Object) {
+		const iframe = document.querySelector(
+			'iframe.giscus-frame'
+		) as HTMLIFrameElement;
+		if (!iframe || !iframe.contentWindow) return;
+		iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+	}
+
+	function getCurrentTheme() {
+		const theme =
+			document.firstElementChild &&
+			document.firstElementChild.getAttribute('data-theme');
+		return theme;
+	}
+
+	function createGusicScript() {
+		const container = document.querySelector('#js');
+		const theme = getCurrentTheme() == 'light' ? 'light' : 'dark_dimmed';
+		let script = document.createElement('script');
+		script.src = 'https://giscus.app/client.js';
+		script.setAttribute('data-repo', giscus_repo);
+		script.setAttribute('data-repo-id', giscus_repo_id);
+		script.setAttribute('data-category', 'General');
+		script.setAttribute('data-category-id', giscus_category_id);
+		script.setAttribute('data-mapping', 'og:title');
+		script.setAttribute('data-strict', '0');
+		script.setAttribute('data-reactions-enabled', '0');
+		script.setAttribute('data-emit-metadata', '0');
+		script.setAttribute('data-input-position', 'top');
+		script.setAttribute('data-theme', theme);
+		script.setAttribute('data-lang', giscus_lang || 'en');
+		script.setAttribute('data-loading', 'lazy');
+		script.setAttribute('crossorigin', 'anonymous');
+		script.async = true;
+		container && container.appendChild(script);
+	}
+
+	createGusicScript();
+	document.querySelector('#theme-btn')?.addEventListener('click', () => {
+		const theme = getCurrentTheme();
+		sendMessage({
+			setConfig: { theme: theme == 'light' ? 'dark_dimmed' : 'light' },
+		});
+	});
+</script>

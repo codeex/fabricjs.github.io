@@ -1,9 +1,9 @@
 ---
 date: '2013-06-22'
-title: 'Free drawing'
-description: 'Free drawing in canvas using FabricJS'
+title: '自由绘制'
+description: '使用FabricJS自由绘制'
 thumbnail: 'free-drawing.png'
-tags: ['drawing', 'brush']
+tags: ['绘制', '刷子']
 ---
 
 import './index.css';
@@ -16,42 +16,42 @@ import { FreeDrawingUI } from './FreeDrawingUI';
 	<canvas id="c" width="500" height="500"></canvas>
 
     <div id="drawing-mode-options">
-    	<button id="drawing-mode" className="btn btn-info">Cancel drawing mode</button>
-    	<button id="clear-canvas" className="btn btn-info">Clear</button>
+    	<button id="drawing-mode" className="btn btn-info bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">取消绘制模式</button>
+    	<button id="clear-canvas" className="btn btn-info bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">清除</button>
     	<label htmlFor="drawing-mode-selector">
-    		Mode:
+    		绘制模式:
     		<select id="drawing-mode-selector">
-    			<option>Pencil</option>
-    			<option>Circle</option>
-    			<option>Spray</option>
-    			<option>Pattern</option>
-    			<option>hline</option>
-    			<option>vline</option>
-    			<option>square</option>
-    			<option>diamond</option>
-    			<option>texture</option>
+    			<option>铅笔(Pencil)</option>
+    			<option>圆形(Circle)</option>
+    			<option>喷溅(Spray)</option>
+    			<option>图案(Pattern)</option>
+    			<option>横线(hline)</option>
+    			<option>竖线(vline)</option>
+    			<option>正方形(square)</option>
+    			<option>菱形(diamond)</option>
+    			<option>纹理(texture)</option>
     		</select>
     	</label>
     	<label htmlFor="drawing-line-width">
-    		Line width:
+    		线宽:
     		<span className="info">30</span>
     		<input type="range" min="0" max="150" id="drawing-line-width" />
     	</label>
     	<label htmlFor="drawing-color">
-    		Line color:
+    		线颜色:
     		<input type="color" id="drawing-color" />
     	</label>
     	<label htmlFor="drawing-shadow-color">
-    		Shadow color:
+    		阴影颜色:
     		<input type="color" id="drawing-shadow-color" />
     	</label>
     	<label htmlFor="drawing-shadow-width">
-    		Shadow width:
+    		阴影宽度:
     		<span className="info">0</span>
     		<input type="range" min="0" max="50" id="drawing-shadow-width" />
     	</label>
     	<label htmlFor="drawing-shadow-offset">
-    		Shadow offset:
+    		阴影偏移:
     		<span className="info">0</span>
     		<input type="range" min="0" max="50" id="drawing-shadow-offset" />
     	</label>

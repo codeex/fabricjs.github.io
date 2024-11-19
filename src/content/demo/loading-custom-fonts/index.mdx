@@ -1,22 +1,24 @@
 ---
 date: '2017-10-24'
-title: 'Loading custom fonts'
-description: 'Loading custom fonts in FabricJS'
+title: '载入自定义字体'
+description: '使用 FabricJS 载入自定义的字体格式'
 thumbnail: 'load-custom-fonts.png'
-tags: ['fonts', 'typography', 'custom']
+tags: ['字体', 'typography', '自定义']
 ---
 
-When working with custom fonts on a fabric canvas, it is recommended to
-use the [CSS Font loader api](https://developer.mozilla.org/en-US/docs/Web/API/CSS_Font_Loading_API).
-Not doing so will make your app do FOUT(s) (Flash of Unstyled Text).
-This happens because font loading involve network and is async by nature, and so when you will be adding a text object with a custom font, or switching font, the canvas will try to render before the font has been actually loaded and so the browser will fallback on the specified fallback font or the default one.
+在 Fabric 画布上使用自定义字体时，建议使用 [CSS 字体加载 API](https://developer.mozilla.org/en-US/docs/Web/API/CSS_Font_Loading_API)。  
+如果不这样做，您的应用程序可能会出现 **FOUT**（无样式文本闪烁，Flash of Unstyled Text）的问题。  
+这是因为字体加载涉及网络请求并且是异步的，因此当您添加一个使用自定义字体的文本对象，或者切换字体时，画布会在字体实际加载之前尝试渲染，浏览器会回退到指定的后备字体或默认字体。
 
-If for some reason your target browsers do not support that api yet you can pick from a selection of font preloading libraries like [Font Face Observer](https://github.com/bramstein/fontfaceobserver)
+如果您的目标浏览器暂时不支持该 API，您可以选择一些字体预加载库，如 [Font Face Observer](https://github.com/bramstein/fontfaceobserver)。
 
-In this example we are using the browser native CSS Font loader api to load 2 google fonts from google's cdn.
-We load the font, then we create a textbox and then use the loaded font family. Note that you could create the textbox, add them to canvas and just re-render when the font is loaded, doing so you would have saved in FabricJS cache some values calculated with the font not correctly loaded and likely **have cursor positioning issues** or **wrong bounding boxes issues**. Always assign the font family after the font has correctly loaded.
+在这个示例中，我们使用浏览器原生的 CSS 字体加载 API 从 Google 的 CDN 加载 2 个 Google 字体。  
+我们先加载字体，然后创建一个文本框，并使用已加载的字体系列。请注意，您可以先创建文本框，添加到画布，然后在字体加载完成后重新渲染。  
+这样做可能会导致 FabricJS 缓存中保存了一些使用未正确加载字体计算的值，并且很可能会出现 **光标定位问题** 或 **错误的边界框问题**。  
+因此，请确保在字体正确加载后再指定字体系列。
 
-When dealing with fonts with multiple weights and styles is easier to assign a different font family to each of them and just use different font families, in the example's code we do show how to load different weights with the same family name, but be aware that one font file has one family, one weight and one style. Loading the font `Lato` doesn't grant you access to all variants of the fonts, but just one. there is one file per variant.
+当处理具有多个粗细和样式的字体时，最好为每个粗细和样式分配不同的字体系列，并使用不同的字体系列。在示例代码中，我们展示了如何使用相同的字体名称加载不同粗细的字体，但请注意，一种字体文件只包含一种字体家族、一种粗细和一种样式。  
+加载字体 `Lato` 并不意味着您可以访问该字体的所有变体，而仅仅是其中一个变体。每个变体对应一个字体文件。
 
 import { CodeEditor } from '../../../components/CodeEditor';
 import code from './code?raw'

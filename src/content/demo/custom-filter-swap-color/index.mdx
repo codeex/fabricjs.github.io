@@ -1,29 +1,30 @@
 ---
 date: '2020-12-30'
-title: 'Custom filter'
-description: 'Create a custom filter that swap colors'
+title: '自定义滤镜'
+description: '建立一个自定义滤镜去改变颜色'
 thumbnail: 'custom-filter-swap-color.png'
-tags: ['filters', 'customization']
+tags: ['滤镜', '自定义']
 ---
 
 import { InputEventAttacher } from './CustomFilter'
 
-### How to create a custom filter to process your images
+### 如何创建一个自定义滤镜来处理图像
 
-Fabric has a boiler plate file to start your new filter.
-I decided to call this filter SwapColor, so i start from this file [boilerplate](https://github.com/fabricjs/fabric.js/blob/master/src/filters/Boilerplate.ts) duplicate it, and first thing you can do is replace all the instances of `MyFilter` with `SwapColor`.
+Fabric 提供了一个模板文件来帮助您开始创建新滤镜。  
+我决定创建一个叫做 **SwapColor** 的滤镜，因此我从这个文件 [boilerplate](https://github.com/fabricjs/fabric.js/blob/master/src/filters/Boilerplate.ts) 复制了它，然后第一步就是将所有的 `MyFilter` 替换为 `SwapColor`。
 
-Then start coding your filter code.
+接下来开始编写您的滤镜代码。
 
-The idea behind this filter is that would start simple, take a color in the picture and swap with another, if the match exactly.
-We need to write this code both for the JS part and for the WEBGL part.
+这个滤镜的基本思路是简单地从图像中选择一种颜色并将其与另一种颜色进行交换，如果两者完全匹配。  
+我们需要为 JS 部分和 WEBGL 部分编写代码。
 
-### Prerequisites
+### 前提条件
 
-The standard one parameter filter is able to save/restore itself using the `mainParameter` argument, but this one needs 2 of them.
-So we delete any reference to `mainParameter` and we add a couple of things.
+标准的单参数滤镜可以使用 `mainParameter` 参数来保存/恢复自身，但这个滤镜需要两个参数。  
+因此，我们删除了 `mainParameter` 的任何引用，并添加了一些必要的内容。
 
-The filters needs to handle the source color and the destination color, so we add some basic information to our empty boilerplate.
+这个滤镜需要处理源颜色和目标颜色，所以我们为空的模板添加了一些基本信息。
+
 
 ```js
 /**
@@ -40,8 +41,7 @@ colorSource = 'rgb(255, 0, 0)',
  */
 colorDestination = 'rgb(0, 255, 0)',
 ```
-
-On top of that the filter needs to be able to store and restore itself.
+上面代码显示滤镜需要能够存储和回复它自己。
 
 ```js
 /**
@@ -56,16 +56,16 @@ toObject() {
 }
 ```
 
-And now we should make the filter work in 2DCanvas and WebGL.
+现在我们应该使滤镜在 2DCanvas 和 WebGL 上都能正常工作。
 
-### 2DCanvas routine for pixel swapping
+### 2DCanvas 中的像素交换操作
 
-Inside the filter class, `applyTo2d` is the function you have to look at for the standard non WebGL support.
-This code is rarely needed if you run from browser, useful if you run also in node, but anyway fabricJs is now supporting both modes,
-so if you want to write a filter, better you handle both of them.
+在滤镜类中，`applyTo2d` 是您需要查看的函数，用于支持标准的非 WebGL 模式。  
+如果您在浏览器中运行，这段代码通常不需要，只有在运行在 Node 环境时才会有用。不过，FabricJS 现在同时支持这两种模式，因此，如果您想编写一个滤镜，最好同时处理这两种模式。
 
-The logic is simple, for each pixel, if the color match, swap it with the destination one.
-To determine if a color match, we use `fabric.Color` to parse a css color string and we compare the first 3 components.
+逻辑很简单，对于每个像素，如果颜色匹配，则将其与目标颜色交换。  
+为了判断颜色是否匹配，我们使用 `fabric.Color` 来解析 CSS 颜色字符串，并比较前三个分量。
+
 
 ```ts
 /**
@@ -89,15 +89,15 @@ applyTo2d(options: T2DPipelineState) {
 },
 ```
 
-That's all for the 2D canvas part.
+这就是 2DCanvas 部分的全部内容。
 
-### The WebGL part
+### WebGL 部分
 
-If you are comfortable with WebGL this part will look super easy, if not there are some concept to grasp.
-**Disclaimer**: I'm not great at WebGL and this code reflect how fabricJS is wrapping the basic functionalities in reusable pieces.
+如果您对 WebGL 熟悉，这部分内容会显得非常简单；如果不熟悉的话，需要掌握一些概念。  
+**免责声明**：我并不擅长 WebGL，这段代码反映了 FabricJS 如何将基本功能封装成可复用的组件。
 
-First of all you have to setup the variables injecton in the webgl shader, this is done with the couple `getUniformLocations` and `sendUniformData`.
-The `getUniformLocations` will define how those variables are called in the shader, while `sendUniformData` will be responsible to bind data to them. Writing `sendUniformData` is definetely the hardest part since you have to know which type of variable you are using. In our case we are changing color strings in array of 4 number between 1 and 0, and to do so we need to use the `gl.uniform4fv` function.
+首先，您需要设置 WebGL 着色器中的变量注入，这是通过 `getUniformLocations` 和 `sendUniformData` 两个函数完成的。  
+`getUniformLocations` 用来定义这些变量在着色器中的名称，而 `sendUniformData` 则负责将数据绑定到这些变量上。编写 `sendUniformData` 显然是最困难的部分，因为您必须了解您使用的变量类型。在我们的例子中，我们正在将颜色字符串转换为一个介于 0 和 1 之间的 4 个数字的数组，为此我们需要使用 `gl.uniform4fv` 函数。
 
 ```ts
 /**
@@ -133,8 +133,7 @@ sendUniformData(gl, uniformLocations) {
   gl.uniform4fv(uniformLocations.uColorDestination, destination);
 },
 ```
-
-And then of course the webgl shader source is needed.
+然后，webgl的下面代码是需要的。
 
 ```ts
 /**
@@ -155,7 +154,7 @@ getFragmentSource() {
 }
 ```
 
-### Let's see it in action
+### 让我们自己来试试
 
 <input type="color" id="colorSource" value="#00ff36" />
 <input type="color" id="colorDestination" value="#23278a" />

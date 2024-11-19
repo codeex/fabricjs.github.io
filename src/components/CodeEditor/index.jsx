@@ -10,6 +10,7 @@ import { debounce } from '../../utils/debounce';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Helmet } from 'react-helmet';
 import { espresso } from 'thememirror';
+import './index.css'
 
 export const CodeEditor = ({ code: codeProp, children, canvasId, autoRun = true, runOnChange = true, canvasDown = false }) => {
   const divRef = useRef();
@@ -84,14 +85,14 @@ export const CodeEditor = ({ code: codeProp, children, canvasId, autoRun = true,
   });
 
   return (
-    <div className='not-content'>
+    <div className='not-content my-4 border border-solid border-gray-300' >
       <Helmet>
         <script type="module">{code}</script>
       </Helmet>
       {canvasDown || children}
       <div ref={divRef} style={{ marginTop: '1rem' }} />
-      <button onClick={() => runCallback([editorRef.current.state.doc.toString()])}>runMe</button>
+      <button onClick={() => runCallback([editorRef.current.state.doc.toString()])} className='bg-green-200 hover:bg-green-500 text-black font-bold py-2 px-4 rounded'>runMe</button>
       {canvasDown && children}
-    </div>
+    </div>    
   );
 };

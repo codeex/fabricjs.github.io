@@ -1,43 +1,41 @@
 ---
 date: '2015-03-10'
-title: 'Polygon Controls'
-description: 'Polygon Controls'
+title: '多边形控制'
+description: '多边形控制演示'
 thumbnail: 'thumbnail.png'
-tags: ['controls', 'customization', 'polygon']
+tags: ['控制', '自定义', '多边形']
 ---
 
 import { CodeEditor } from '../../../components/CodeEditor';
 import code from './code?raw';
 
-This demo shows how to use the controls api to do something like changing the shape of a polygon.
-This is generally harder to grasp because require understanding the internal polygon logic,
-anchor points and transformations.
+这个示例展示了如何使用控制器 API 来实现类似于更改多边形形状的功能。  
+这通常比较难以理解，因为需要理解多边形的内部逻辑、锚点和变换。
 
-In the demo the canvas has zoom and translation, so we are sure our code is generic enough.
-The polygon is given some big strokeWidth for the same reason.
+在这个示例中，画布具有缩放和平移功能，因此我们确保我们的代码足够通用。  
+出于同样的原因，多边形的边框宽度设置得比较大。
 
-We have a function that trigger the `none>edit mode`.
-When we enter in edit mode we create one new control for each polygon point.
-To those controls we attach a property, called point index, to remember to which point they are bound to.
+我们有一个函数来触发 `none>edit mode`（编辑模式）。  
+当我们进入编辑模式时，我们为每个多边形的点创建一个新的控制器。  
+对于这些控制器，我们附加了一个名为 `point index` 的属性，用来记住它们绑定到哪个点。
 
-Those controls use their own custom position handler: `none>polygonPositionHandler`. This function
-look at the pointIndex of the control and return the current canvas position for that particular point.
-In this way interaction and rendering are done.
+这些控制器使用自己的自定义位置处理器：`none>polygonPositionHandler`。这个函数查看控制器的 `pointIndex`，并返回该特定点在画布上的当前位置。  
+通过这种方式，我们完成了交互和渲染。
 
-To make the actual control change the current point, we need to write a custom action handler.
+为了使实际的控制器更改当前的点位置，我们需要编写一个自定义的动作处理器。
 
-Changing a point position is actually easy:
+更改点位置其实很简单：
 
 ```javascript
 fabricObject.points[index].x = number;
 fabricObject.points[index].y = number;
 ```
 
-The hard part is handling the object that change dimensions while mantaining the correct position.
+困难的部分是处理对象尺寸变化，同时保持正确的位置。
 
-We need an anchor point. We choose to fix the polygon position on the actual position of any point of the points array that is not the one that we are dragging.
+我们需要一个锚点。我们选择将多边形的位置固定在点数组中，但不包括正在拖动的点的位置。
 
-So having chosen the point, we calculate its actual absolute position:
+选择好锚点后，我们计算其实际的绝对位置：
 
 ```javascript
 var absolutePoint = fabric.util.transformPoint(
@@ -49,26 +47,25 @@ var absolutePoint = fabric.util.transformPoint(
 );
 ```
 
-We will use this absolute position after we have modified the polygon.
+在修改多边形后，我们将使用这个绝对位置。
 
-Then we swap the dragged point with the new one, we recalculate the width/height and pathOffset of the polygon ( basically we reinitialize its dimensions ).
+接下来，我们交换拖动的点和新的点，重新计算多边形的宽度/高度和 pathOffset（基本上是重新初始化其尺寸）。
 
-Now to keep its position steady, we want to know the point that represent the anchor point, in what position is now relative to polygon size.
+现在，为了保持位置稳定，我们需要知道当前锚点相对于多边形大小的位置：
 
 ```javascript
 var newX = (fabricObject.points[anchorIndex].x - fabricObject.pathOffset.x) / fabricObject.width,
   newY = (fabricObject.points[anchorIndex].y - fabricObject.pathOffset.y) / fabricObject.height;
 ```
 
-Now newX and newY represent the point position with a range from -0.5 to 0.5 for X and Y.
-Fabric supports numeric origins for objects with a range from 0 to 1. This let us use the relative position as an origin to translate the old absolutePoint we find before.
+现在，`newX` 和 `newY` 表示锚点位置的相对坐标，范围是 -0.5 到 0.5（对于 X 和 Y）。
+Fabric 支持对象的数字原点，范围是 0 到 1。这让我们可以使用相对位置作为原点，将之前找到的绝对位置 `absolutePoint` 进行平移。
 
 ```javascript
 fabricObject.setPositionByOrigin(absolutePoint, newX + 0.5, newY + 0.5);
 ```
 
-In the below canvas, use the classic controls to scale and rotate the polygon, use a double click to switch back and forth in polygon editing mode. Once in polygon editing mode, you can drag point of the polygon around with an orchestrated user experience that feels correct.
-
+在下面的画布中，使用经典控制器来缩放和旋转多边形，双击切换进入和退出多边形编辑模式。进入编辑模式后，您可以拖动多边形的各个点，体验一个协调的用户交互，感觉自然且流畅。
 <CodeEditor code={code} canvasId="canvas" client:idle>
   <canvas id="canvas" width="500" height="500"></canvas>
 </CodeEditor>

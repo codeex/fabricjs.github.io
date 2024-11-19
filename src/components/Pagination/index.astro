@@ -1,0 +1,13 @@
+---
+import Pagination from '@astrojs/starlight/components/Pagination.astro';
+import FeedbackComponent from '../Feedback/index.astro';
+import type { Props } from '@astrojs/starlight/props';
+const { slug } = Astro.params;
+const postUrl = `https://fabricjs.cc/docs/${slug}`;
+---
+
+<>
+	<div id="js"></div>
+	<!-- <FeedbackComponent /> -->
+	<Pagination {...Astro.props} />
+</>

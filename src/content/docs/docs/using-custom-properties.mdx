@@ -1,56 +1,63 @@
 ---
 date: '2024-08-04'
-title: 'Objects and custom properties'
+title: '对象和定制属性'
 sidebar:
+  # label: 对象和定制属性
   order: 4
 ---
 
-### Custom properties
+## 对象和自定义属性
 
-When building your application you may need to attach to objects some custom properties.
-One very common need is to have an `id` or a `name` on objects.
+通过定义对象的自定义属性，可以完成业务上需要的特殊处理，例如：定义对象的`id`或`value`等等，以方便后续的逻辑处理。
 
-If you are using Typescript or if you want your IDE to suggest you completition you will need to clearly state which those properties are.
+### 自定义属性
 
-On top of that there is the serialization issue that will require you to pass down those properties in the argument of the function `toObject`.
+在构建应用程序时，你可能需要向对象添加一些自定义属性。一个非常常见的需求是将`id`和`name`属性添加到对象上。
+
+如果你正在使用 TypeScript 或者希望你的IDE能够提供自动补全功能，那么你需要明确声明这些属性是什么。
+
+此外，还存在一个序列化的问题，需要你在函数`toObject`的参数中传递这些属性。
 
 ```ts
-// example without proper typing:
+// 直接用，但没有ts的提示检测:
 (myRect as any).name = 'rectangle';
 myRect.toObject(['name', 'id']);
 ```
 
-To make this nicer you have to use the Typescript feature for interfaces and a custom property hook in the object class
+为了使代码更美观，你必须使用 TypeScript 的接口特性和对象的自定义属性钩子。
 
 ```ts
 import { FabricObject } from 'fabric';
 
 declare module "fabric" {
-  // to have the properties recognized on the instance and in the constructor
+  // 确保类的属性不仅在实例对象中可以访问和使用，而且也能在构造函数中被正确识别和初始化
   interface FabricObject {
     id?: string;
     name?: string;
   }
-  // to have the properties typed in the exported object
+  // 确保导出的对象具有类型化的属性
   interface SerializedObjectProps {
     id?: string;
     name?: string;
   }
 }
 
-// to actually have the properties added to the serialized object
+// 确保属性实际添加到序列化对象中
 FabricObject.customProperties = ['name', 'id'];
 ```
 
-This change will make the types work correcty:
+这样的改变将使类型推断工作正确：
 
-![](/article_assets/custom_props/constructor.png)
-![](/article_assets/custom_props/property.png)
-![](/article_assets/custom_props/export.png)
+- 错误1
+![错误1](/article_assets/custom_props/constructor.png)
+- 错误2
+![错误2](/article_assets/custom_props/property.png)
+- 正确
+![正确](/article_assets/custom_props/export.png)
 
-### Custom methods
+### 自定义方法
 
-In general it makes things simplier if you can stick to external utility functions, but in the cases in which you want to attach a specific method to the prototype of different classes, you have to do modify the interface again:
+一般来说，如果你能坚持使用外部函数，事情会变得简单。但在特定情况下，当你想将特定的方法添加到不同对象的原型上时，你必须进行一些修改：
 
 ```ts
 // declare the methods for typescript
@@ -70,10 +77,9 @@ Rect.prototype.getText = function() { return 'none'; }
 Text.prototype.getText = function() { return this.text; }
 ```
 
-### Subclassing
+### 定义子类
 
-Subclassing is easier but is not always possible.
-If you want to subclass leaf nodes like `Rect`, `Textbox`, `IText`, `Path`, that is possible and easy
+定义子类变得更加容易，但并不总是可行的。例如，如果你想定义像`Rect`, `Textbox`, `IText`, `Path`的派生类，这是可能且容易的。
 
 ```ts
 import { classRegistry, SerializedPathProps } from 'fabric';
@@ -94,7 +100,7 @@ export class PathPlus<
   SProps extends SerializedPathPlusProps = SerializedPathPlusProps,
   EventSpec extends ObjectEvents = ObjectEvents,
 > extend Path<Props, SProps, EventSpec> {
-  static type: 'path' // if you want it to override Path completely
+  static type: 'path' // 如果你希望它完全覆盖 Path
   declare id?: string;
   declare name?: string;
 
@@ -106,15 +112,19 @@ export class PathPlus<
   }
 }
 
-// to make possible restoring from serialization
+// 使得从序列化数据中恢复成为可能
 classRegistry.setClass(PathPlus, 'path');
-// to make PathPlus connected to svg Path element
+// 使 PathPlus 与 SVG Path 元素关联
 classRegistry.setSVGClass(PathPlus, 'path');
 ```
 
-But you can't subclass FabricObject and add it back in the prototype chain of the other objects.
+但是，你不能派生一个FabricObject并将其添加到其他对象的原型链中。
 
-### Warning
+### 警告
+:::caution
+你应该只添加在渲染或事件处理时，能简化代码的自定义属性。
+一般来说，画布上的 FabricJS 类和对象不应被包含在与其渲染需求或行为配置无关的数据内，它们不应成为你应用程序的数据存储。
 
-You should add custom properties when they make your life simpler during rendering or event handling.
-In general FabricJS classes/objects on the canvas shouldn't contain data that is not relevant to their rendering needs or behaviour configuration, they shouldn't become data stores of your application.
+:::
+
+

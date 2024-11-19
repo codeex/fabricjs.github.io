@@ -1,46 +1,44 @@
 ---
 date: '2015-03-10'
-title: 'Custom controls'
-description: 'Using the custom controls api'
+title: '自定义控制'
+description: '演示使用自定义控制的api'
 thumbnail: 'custom-controls.png'
-tags: ['controls', 'customization']
+tags: ['控制', '自定义']
 ---
 
 import { CodeEditor } from '../../../components/CodeEditor';
 import code from './code?raw';
 import code2 from './code2?raw';
 
-This demo show how to start using the custom controls api.
-This first example show how to write a custom render method for your control and how to define a custom action to run on the control mouseup.
-The new api offers the ability to run custom actions on:
+这个演示展示了怎么开始使用自定义控制API。
+第一个例子展示了为了控制怎么去写一个自定义绘制方法，以及怎么去定义一个自定义动作来响应鼠标。
+新的API提供了如下鼠标能力：
 
-- mousedown
-- mouseup
-- mousemove
+- 鼠标按下（mousedown）
+- 鼠标释放（mouseup）
+- 鼠标移动 （mousemove）
 
-And to run custom code for
+以及去运行自定义代码：
 
-- positioning
-- rendering
-- cursor style
+- 位置
+- 绘制
+- 光标风格
 
-## Creating the control
+## 1.建立控件
 
-We create a new control and we add it to the object.
-To create a control we use `javascript>new fabric.Control(options)`
-In this case we want the corner to be near the top right classic control, so we give it a position of x of 0.5 that is the extreme right of the bounding box of the object.
-Same for y at -0.5. We do not want it to overlap with the current top right corner, so we add an `offsetY` with a positive number that will make it render a bit more down.
+我们创建一个新的控件并将其添加到对象中。
 
-We want our control to render an icon rather than a fabric supported circle or square.
-So we have to provide our own render function to the control.
-The function is receiving the canvas context as first argument and so a simple drawImage will make it.
+要创建控件，我们使用 `javascript>new fabric.Control(options)`。
 
-For the custom action we want simply to delete the object.
-We build a function following the mouseUpHandler signature and we use there `javascript>canvas.remove(target)`;
+在这里，我们希望控件的位置接近对象的右上角经典控件，因此我们将 `x` 设置为 0.5，即对象边界框的最右端。同样地，将 `y` 设置为 -0.5。我们不希望它与当前的右上角重叠，因此添加一个正数的 `offsetY`，这样会让它向下稍微偏移一些。
+
+我们希望控件渲染一个图标，而不是 Fabric 支持的圆形或方形，因此需要为控件提供自定义的渲染函数。该函数会接收画布的上下文作为第一个参数，因此简单的 `drawImage` 调用就可以实现图像绘制。
+
+对于自定义操作，我们仅希望删除对象。我们构建一个符合 `mouseUpHandler` 的函数，并在其中使用 `javascript>canvas.remove(target)`。
 
 <div className="controls">
   <p>
-    <button id="add">Add a rectangle</button>
+    <button id="add" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">增加一个矩形框</button>
   </p>
 </div>
 <CodeEditor code={code} canvasId="test1" client:idle>
@@ -49,16 +47,15 @@ We build a function following the mouseUpHandler signature and we use there `jav
 
 ## Adding a clone control
 
-Let's add a new control to allow for quick duplication of the Object.
-We use again `javascript>new fabric.Control(options)` and we add it to a key named `clone`.
-When the objects are shrunk too much, corners with offset do not look great, so in this case
-let's try to keep them outside the bounding box, on the top.
+我们来演示如何快速的控制去复制一个新的对象.
+我们再次使用 `javascript>new fabric.Control(options)` ，并增加到名为 `clone`的键值中.
+当对象缩小太多时，具有偏移的拐角看起来不太好，因此让我们让这个图标保持在边界框之外的顶部。
 
-For the clone functionality we will simply do `javascript>target.clone(function(cloned) { canvas.add(cloned) });`
+对于克隆复制功能，我们只需执行 `javascript>target.clone(function(cloned) { canvas.add(cloned) });`
 
 <div className="controls">
     <p>
-      <button id="add2">Add a rectangle</button>
+      <button id="add2" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">增加一个矩形框</button>
     </p>
   </div>
 <CodeEditor code={code2} canvasId="test2" client:idle>

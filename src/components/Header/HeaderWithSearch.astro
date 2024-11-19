@@ -1,8 +1,10 @@
 ---
 import Search from '@astrojs/starlight/components/Search.astro';
 import Header from './Header.astro';
+import ThemeSelect from '@astrojs/starlight/components/ThemeSelect.astro';
 ---
 
 <Header>
-    <Search {...Astro.props} />
+	<Search {...Astro.props} />
+	<ThemeSelect />
 </Header>

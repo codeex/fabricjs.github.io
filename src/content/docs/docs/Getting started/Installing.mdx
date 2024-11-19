@@ -1,0 +1,69 @@
+---
+date: '2015-03-10'
+title: '开始'
+description: '使用 FabricJS 开始新世界'
+sidebar:
+  order: 1  
+---
+import { Tabs, TabItem } from '@astrojs/starlight/components';
+
+FabricJS 是一个基于 TypeScript 框架完全封装的Canvas画布操作类库，提供丰富的操作圆、矩形、图片、文字等对象的丰富功能，开箱即用的特性让我非常欣喜，如果你需要使用HTML 的 Canvas完成某些功能的话，不妨来学习下。
+💯💯💯
+## 准备开始
+
+### 如何安装
+
+FabricJS 可以通过如下方式安装到你的工程中。
+
+### 通过脚本标签从 CDN 加载
+
+在 HTML 页面中包含来自提供此服务的任何 CDN 的脚本标记，例如[cdnjs](https://cdnjs.com/libraries/fabric.js) 、 [jsdelivr](https://www.jsdelivr.com/package/npm/fabric.js) 、 [unpkg](https://unpkg.com/fabric@latest/dist/fabric.js)
+
+```html
+<script src="https://cdn.jsdelivr.net/npm/fabric@latest/dist/fabric.js"></script>
+```
+
+### 通过包管理工具安装
+
+<Tabs syncKey="pkg">
+<TabItem label="npm">
+
+```sh
+npm install fabric --save
+```
+
+</TabItem>
+<TabItem label="pnpm">
+
+```sh
+pnpm add fabric
+```
+
+</TabItem>
+<TabItem label="Yarn">
+
+```sh
+yarn add  fabric
+```
+
+</TabItem>
+</Tabs>
+
+### 浏览器支持情况
+:::tip
+请一定要检查你的运行环境,确保支持和需求匹配!
+:::
+
+以下列表列出了 FabricJS 在各浏览器中的支持情况。
+通常可以采用一些兼容处理方式来让其在较低版本的浏览器中也能部分运行，但这样做的话可能会导致一些画布功能无法正常实现或只能进行近似模拟。
+
+| 浏览器            | 支持版本 | 备注           |
+| ----------------- | -------- | ------------- |
+| Firefox           | ✔️       | >= 58         |
+| Safari            | ✔️       | >= 11         |
+| Opera             | ✔️       | chromium 内核 |
+| Chrome            | ✔️       | >= 64         |
+| Edge              | ✔️       | chromium 内核 |
+| Edge（旧版）       | ❌       |               |
+| Internet Explorer | ❌       |               |
+| Node              | ✔️       | >= 18         |

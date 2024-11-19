@@ -1,0 +1,10 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+ .sl-markdown-content a{
+    @apply text-blue-800;
+  }
+ .sl-markdown-content a:hover{
+    @apply text-blue-400;
+  }

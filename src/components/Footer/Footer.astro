@@ -1,0 +1,37 @@
+---
+import './footer.css';
+
+const links = [
+	{ text: '本站技术:', href: 'https://blog.csdn.net/codeex' },
+	{ text: 'Vue', href: 'https://cn.vuejs.org/' },
+	{ text: 'Tailwindcss', href: 'https://tailwindcss.com/' },
+	{ text: 'Vite', href: 'https://vitejs.cn/' },
+	{ text: 'Webmote', href: 'https://blog.csdn.net/codeex' },
+	{ text: 'MDX', href: 'https://www.mdxjs.cn/' },
+	{ text: 'Astro', href: 'https://astro.build/' },
+	{ text: 'CodeEx', href: 'https://blog.csdn.net/codeex' },
+
+	{ text: 'React', href: 'https://reactnative.cn/' },
+];
+---
+
+<div class="border-t-gray-200 border-solid border-t m-5 py-2">
+	<div class="flex flex-wrap">
+		{
+			links.map((link, index) => (
+				<div class="w-28">
+					<a href={link.href} target="_blank">
+						{link.text}
+					</a>
+				</div>
+			))
+		}
+	</div>
+	<div class="pb-2 font-thin font-serif italic text-sm text-gray-400">
+		© 2024-2030 fabricjs.cc 版权所有 ICP证：<a
+			class="text-gray-400"
+			href="https://beian.miit.gov.cn/"
+			target="_blank">陕ICP备19003267号-4</a
+		>
+	</div>
+</div>

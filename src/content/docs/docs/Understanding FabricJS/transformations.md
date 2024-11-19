@@ -1,14 +1,12 @@
 ---
 date: '2023-08-20'
-title: 'Transformations'
-description: 'Transformations'
+title: '变换'
+description: '变换'
 ---
 
-# Transformations
+## 数学原理
 
-## Math Intro
-
-A transformation is described by a matrix:
+一个变换由一个矩阵描述：
 
 ```ts
 const matrix = [a, b, c, d, e, f];
@@ -18,31 +16,28 @@ const vectorY = [c, d];
 const translation = [e, f];
 ```
 
-`vectorX` and `vectorY` describe the transform applied to the unit vectors `[1, 0]` and `[0, 1]` respectively.
-We use the decomposed values (`angle`, `scaleX`, `scaleY`, `skewX`, `skewY`) that are derived from the transformation applied to the unit vectors, see `qrDecompose`.
+`vectorX` 和 `vectorY` 分别描述了对单位向量 `[1, 0]` 和 `[0, 1]` 应用的变换。我们使用从单位向量应用的变换中导出的分解值（ `angle` ， `scaleX` ， `scaleY` ， `skewX` ， `skewY` ），参见 `fabric.qrDecompose` 。
 
-`translation` describes the offset from the parent plane's `(0, 0)` to the center of the plane, decomposed into `translateX` and `translateY`. Canvas `(0, 0)` is the canvas' tl corner, group `(0, 0)` is the group's center point.
+变换应用顺序：
 
-Transformations application order:
+- 偏移
+- 旋转
+- 缩放
+- X轴的倾斜
+- Y轴的倾斜
 
-- Translation
-- Rotation
-- Scale
-- SkewX
-- SkewY
+了解更多关于[矩阵]和[变换]的信息，请访问 MDN。
 
-Read more about [matrices] and [transforms] on MDN.
+## 如何工作
 
-## How It Works
+每个对象都有自己的变换，定义为一个*平面（plane）*。
+一个对象可以存在于由另一个对象定义的平面中（例如，嵌套在组中的对象，剪辑路径），这意味着该对象会受到该平面的影响。
 
-Each object has its own transform that defines a _plane_.
-An object can exist in a _plane_ defined by another object (e.g. an object nested under a group, a clip path). This means that the object is affected by that _plane_.
+变换应用顺序：
 
-Transformations application order:
-
-- Viewport
-- Parent groups
-- Own
+- 视口
+- 父分组
+- 拥有者
 
 ```ts
 // own transform
@@ -55,31 +50,32 @@ object.calcTransformMatrix();
 multiplyTransformMatrixArray([canvas.viewportTransform, object.group?.calcTransformMatrix()]);
 ```
 
-Using transformations can be tricky. Sometimes we need to use the relative parent plane (e.g. during rendering) whereas sometimes we need to use the canvas plane or the viewport plane (e.g. object intersection, mouse interactions).
+使用变换可能会很棘手。有时我们需要使用相对于父平面的变换（例如在渲染期间），而有时我们需要使用画布平面或视口平面（例如对象交点、鼠标交互）。
 
-Fabric exposes the following utils for such cases:
+FabricJS 为这种情况提供了以下工具：
 
-```
+```ts
 sendPointToPlane
 sendVectorToPlane
 sendObjectToPlane
 ```
 
-### Origin
+## 起始点
 
-Positioning an object can be done from the center point or from any other point
+定位一个对象可以从中心点或任何其他点进行。
 
 ```ts
-// sets the center point in the canvas plane
+// 在画布平面设置中心点
 object.setCenterPoint(point);
-// sets the center point in the parent plane
+// 在父平面设置中心点
 object.setRelativeCenterPoint(point);
 
-// sets the tl point in the canvas plane
+// 在画布平面设置坐上坐标
 object.setXY(point, 'left', 'top');
-// sets the br point in the parent plane
+// 在父平面设置右下点
 object.setRelativeXY(point, 'bottom', 'right');
 ```
 
-[transforms]: https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API/Tutorial/Transformations#transforms
-[matrices]: https://developer.mozilla.org/en-US/docs/Web/API/WebGL_API/Matrix_math_for_the_web
+[变换]: https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API/Tutorial/Transformations#transforms
+[矩阵]: https://developer.mozilla.org/en-US/docs/Web/API/WebGL_API/Matrix_math_for_the_web
+

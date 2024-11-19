@@ -5,6 +5,8 @@
     "jsxImportSource": "react",
     "strictNullChecks": true,
     "allowJs": true,
+    "noUnusedLocals":false,
+    "noUnusedParameters":false,
   },
   "exclude": ["fabric.js", "src/content/", "dist", "**/*.astro"],
 }

@@ -1,45 +1,65 @@
 ---
 date: '2024-07-01'
-title: 'Your first app'
-description: 'Your hello world application'
+title: '你的第一个app'
+description: '你的第一个hello world 程序'
 sidebar:
   order: 2
 ---
 
 import { CodeEditor } from '../../../../components/CodeEditor';
 import code from './helloworld?raw';
+import { FileTree, Steps } from '@astrojs/starlight/components';
 
-## Your first basic application
+体验是最好的老师, Let's go~
 
-Let's see the simplest app you can write, the `Hello world!` case in a browser.
+## 你的第一个应用
 
-You will need to import at least the `StaticCanvas` and the `FabricText` classes.
+经典的Hello World，来一个!
 
-```ts
-import { StaticCanvas, FabricText } from 'fabric'
-```
+准备工作: 先安装好需要的类库依赖。
+### 你的第一个基础应用
+:::tip
+先安装好需要的类库，再进行下一步, 不会的请看 [这里](/docs/getting-started/installing/)!
+:::
+以下示例，是Typescript所写。
+<Steps>
 
-Then instantiate both of them and combine them
+1. 让我们来看一个可以尝试的最简单App，浏览器中的```Hello World```例子。
+  
+    你至少需要导入```StaticCanvas```和```FabricText```类。
+    ```typescript
+    import { StaticCanvas, FabricText } from 'fabric';
+    ```
 
-```ts
-const canvas = new StaticCanvas();
-const helloWorld = new FabricText('Hello world!');
-canvas.add(helloWorld);
-canvas.centerObject(helloWorld);
-```
+2. 然后实例化它们两个并将它们组合
 
-Then you want to download your PNG file with it
+    ```typescript
+    const canvas = new StaticCanvas();
+    const helloWorld = new FabricText('Hello world!');
+    canvas.add(helloWorld);
+    canvas.centerObject(helloWorld);
+    ```
 
-```ts
-const imageSrc = canvas.toDataURL();
-// some download code down here
-const a = document.createElement('a');
-a.href = imageSrc;
-a.download = 'image.png';
-document.body.appendChild(a);
-a.click();
-document.body.removeChild(a);
-```
+3. 然后你想用它来下载你的 PNG 文件
+
+    ```typescript
+    const imageSrc = canvas.toDataURL();
+
+    // 下面是下载的代码
+    const a = document.createElement('a');
+    a.href = imageSrc;
+    a.download = 'image.png';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    ```
+
+4. 现在来试一试吧！
+
+    复制下面代码或点击运行看看。
+  
+</Steps>
+
 
 Now try it:
 

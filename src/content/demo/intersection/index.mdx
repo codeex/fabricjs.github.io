@@ -1,15 +1,15 @@
 ---
 date: '2013-05-13'
-title: 'Intersection'
-description: 'Intersections in FabricJS'
+title: '交集运算'
+description: '使用 FabricJS 进行交集运算'
 thumbnail: 'intersection.png'
-tags: ['intersection']
+tags: ['交集']
 ---
 
 import { CodeEditor } from '../../../components/CodeEditor';
 import code from './code?raw';
 
-<p>Intersection is checked against <b>bounding boxes</b>, not actual shapes</p>
+<p>交集是通过 <b>边界框</b> 来检查的，而不是实际的形状。</p>
 
 <CodeEditor code={code} canvasId="canvas" client:idle>
   <canvas id="canvas" width="500" height="500"></canvas>

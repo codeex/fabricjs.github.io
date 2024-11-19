@@ -1,6 +1,6 @@
 ---
 date: '2024-07-01'
-title: 'Configuring defaults properties'
+title: '配置默认属性'
 description: ''
 sidebar:
   order: 3
@@ -9,66 +9,70 @@ sidebar:
 import { CodeEditor } from '../../../components/CodeEditor';
 import code1 from './configuring-controls/code1.js?raw';
 
-## Configuring default controls for objects
+## 配置默认属性
 
-If you are looking for configuring default controls please check this other page [Configuring controls](/docs/configuring-controls/).
-Every object in FabricJS ( rect, path, circle...) come with a serie of state properties that determine how the object looks like and some of the default interactive behaviours.
+利用配置FabricJs的全局默认属性，来满足你的自定义环境需求。
 
-You can configure those value when instantiating the object or you may want to set certain properties at project level and forget about them.
-There are a couple of common reasons why you would like to do that globally:
-- you decide you don't want use caching
-- you don't like the transparent 1px stroke around objects
-- you want all your text objects to start with a custom font
-- you may want to setup the project to work with originX and originY set on 'center' as suggested
+### 配置对象的默认控制
 
-Most of the defaults are stored in a static property called <strong>ownDefaults</strong>.
-When the instance is constructed this bag of properties is assigned to the instance with an Object.assign
+如果你正在寻找如何全局配置默认控制操作，请查看另外一篇文章[配置控制操作](/docs/configuring-controls)。
+在 FabricJS 中，每个对象（例如 ```rect、path、circle``` 等）都拥有一系列状态属性，这些属性决定了对象的外观以及一些默认的交互行为。
 
-if you want to change the default Font for the FabricText class for example you can do so by doing
+你可以在初始化对象时配置这些值，也可在项目的某个阶段设置或忽略这些属性的值。
+以下是一些可能促使你全局配置这些属性的理由：
 
-```ts
+- 你不想使用缓存
+- 你不喜欢对象周围一圈1px的透明描边
+- 你希望所有的文本对象使用自定义字体
+- 你想自己设置 ```originX``` 和 ```originY``` 坐标作为程序的中心
+
+大都数默认配置储存在```ownDefaults```静态属性中。
+当对象实例被创建时，会通过```Object.assign```赋值这些属性。
+
+下面是一个例子：如果你想要更改 FabricText 对象的默认字体，可以这样做：
+
+```typescript
 import { FabricText } from 'fabric';
 
 FabricText.ownDefaults.fontFamily = 'Lobster';
 ```
 
-This will make every FabricText and every subclasses that inherits from it have the default font family as `Lobster` unless you specify differently in the constructor.
+这将使每个 FabricText 对象及其继承的子类都使用 ```Lobster``` 作为默认字体，除非你在构造函数中另行指定了不同的字体。
 
-```ts
-new FabricText('Hello World!') // Will have Lobster font
+```typescript
+new FabricText('Hello World!') // 将使用 Lobster 字体
 
-new FabricText('Hello World!', { fontFamily: 'Arial' }) // Will have Arial font
+new FabricText('Hello World!', { fontFamily: 'Arial' }) // 将使用  Arial 字体
 ```
 
-Take care you need to discover where FontFamily is defined before changing it.
-Changing FontFamily on FabricObject will have no effect because FabricText has its own default, while setting it on IText or Textbox will leave FabricText with the original default.
+请注意，在进行更改之前，你需要仔细检查清楚 FontFamily 的定义位置。
+改变 FabricObject 的 FontFamily 可能不会产生任何效果，因为 FabricText 有其自身的默认值。当设置 IText 或者 Textbox 时，会使用 FabricText 的默认值。
 
-As a thumb rule you should change your own defaults once as a way to configure FabricJS to adapt to your application needs.
-Configuring defaults instead of setting every option on every object instance is something that will reduce clutter in your code, but is not going to be faster or better from a performance point of view.
+通常来说，你应该更改一次自己的默认值，以便让 FabricJS 更好的满足你应用的需求。
+配置默认值而不是在每个对象实例时设置每个属性可以减少代码中的混乱，但从性能的角度来看，这样做并不会更快。
 
-There is a method called `getDefaults()` on the instances.
-This will return an object that shows you which are the defaults for that instance.
+这里有一个名为```getDefaults()```的方法。
+该方法会返回一个对象，通过这个对象可以查看实际的默认值。
 
-This method is used on the `toObject` export to optionally avoid to export the default values to reduce the size of the output.
+### 有关原型的说明
 
-## A note on Prototype
+与 FabricJS v5 及更早版本不同，这不会影响已经创建的实例。
 
-Differently from FabricJS version 5 and earlier, this won't affect already constructed instances.
+JavaScript 类语法不支持在原型上使用 FabricJS 之前利用的对象属性。
 
-Javascript Classes syntax does not support properties on the Prototype that FabricJS was leveraging with Objects before.
+如果您真的喜欢旧版本的方法，您仍然可以通过添加一些代码来切换使用。
 
-If you really like the old behaviour you can still switch to it by writing some code.
+这里是一个 FabricObject 的例子：
 
-Here is an example for FabricObject:
-
-```ts
+```typescript
 import { FabricObject } from 'fabric';
 
 Object.assign(FabricObject.prototype, FabricObject.ownDefaults);
 FabricObject.ownDefaults = {};
 ```
 
-Note that you really need some strong reason to do so.
-There are good points, like for example properties that are objects or arrays are not going to be duplicated per instance but shared across all of them.
-On the other side this will create unexpected mutation side effects that you may not want in your application.
-The default for fabricJS is on the safer side, with an eye to overridability.
+请注意，你真的需要一些充分的理由来确定这么做。
+例如，属性是对象或数组的情况，它们不会在每个实例中重复，而是会在所有实例之间共享。
+但另一方面，这可能会产生意想不到的异常和副作用，而这可能是你在应用程序中不希望出现的。
+FabricJS 的默认设置更倾向于安全方面，同时也考虑到了可覆盖性。
+

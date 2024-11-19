@@ -4,7 +4,9 @@
   justify-content: center;
   flex-direction: column;
 }
-
+h3 {
+		@apply font-extrabold m-2 text-xl;	
+	}
 #features h2 {
   display: block;
   font-size: 40px;

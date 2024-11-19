@@ -1,32 +1,33 @@
 ---
 date: '2020-12-25'
-title: 'Duotone filter'
-description: 'Use the Composed filter to create a duotone effect'
+title: 双色调滤镜
+description: '使用组合滤镜实现双色调效果'
 thumbnail: 'duotone-filter.png'
-tags: ['filters', 'customization']
+tags: ['滤镜', '自定义']
 ---
 
 import { InputEventAttacher } from './DuotoneFilter'
 
-### Use the Composed filter to create a duotone effect
+### 使用 Composed 滤镜创建双调效果
 
-Fabric has a `Composed` filter that can be used to mix together different effects into a single one.
-This is not much different than adding more than one filter in the `.filters` property of an image, but it comes handy when you want to define those 3 effects as a single block of effects with a meaning.
+Fabric 提供了一个 `Composed` 滤镜，可以将多个效果混合为一个效果。  
+这与在图像的 `.filters` 属性中添加多个滤镜没有太大区别，但它在您想将这三种效果定义为一个有意义的效果块时非常方便。
 
-### The duotone effect
+### 双调效果
 
-The duotone effect is obtained by reducing an image to two main tones that contrast with each other. This is similar to a black and white image, but mixing color A and color B rather than black to white.
+双调效果是通过将图像简化为两种主要的对比色调来实现的。这类似于黑白图像，但混合的是颜色 A 和颜色 B，而不是黑色和白色。
 
-Some tutorials such as this [one](https://codeburst.io/build-spotifys-colorizer-effect-with-javascript-35cb75fc638c) demonstrate how to create this effect with the standard canvas api.
+一些教程，例如 [这个教程](https://codeburst.io/build-spotifys-colorizer-effect-with-javascript-35cb75fc638c)，展示了如何使用标准的 Canvas API 创建这种效果。
 
-The logic is as follow:
-1. take a picture
-2. make it black and white
-3. blend a light color with multiply mode
-4. blend a dark color with lighten mode
+其逻辑如下：  
+1. 获取一张图片  
+2. 将其转为黑白  
+3. 使用 "multiply" 模式将浅色与图像混合  
+4. 使用 "lighten" 模式将深色与图像混合  
 
-What follows is a simple FabricJS implementation of this technique.
-Above the canvas we place two color pickers in order to change the input values to obtain different outputs.
+以下是这种技术的一个简单 FabricJS 实现。  
+在画布上方，我们放置了两个颜色选择器，允许用户调整输入值以获得不同的输出。
+
 
 <input type="color" id="colorLight" value="#00ff36" />
 <input type="color" id="colorDark" value="#23278a" />

@@ -1,146 +1,134 @@
 ---
 date: '2023-08-20'
-title: 'Core Concepts'
+title: '核心概念'
 description: 'Core Concepts'
 ---
 
-# Core Concepts
+## 核心概念
 
-## State
+### 状态
 
-State is comprised of 2 aspects. The **logical** state and the **visual** state.
-The **visual** state is our end game, what the user sees, whereas the **logical** state is what exists under the hood.
-The 2 are deeply intertwined. However, in many cases, looking at a problem with this concept in mind produces much simpler and performant solutions.
+状态由两方面组成， 一个是逻辑状态，一个是显示状态。
 
-Caching and erasing are 2 examples that utilize this concept.
+显示状态是我们最终目标，即用户最终看到的内容，而逻辑状态则是隐藏在背后的内容。这两个方面紧密相连。在许多情况下，带着这个概念去看待问题会更加清晰明了，能更高效地解决问题。
 
-_Cheating_ the user to think something is happening by showing a visual outcome (that may not correlate to the **logical** state) is sometimes the best way to solve a problem.
+缓存和擦除是该概念的两种示例。
 
-Since we are dealing with 2 states there are cases they fall out of sync.
-Flagging an object as `dirty` will sync its visual state on the next render (invalidating its cache, if it is caching).
+通过外在的显示来欺骗用户，让他们认为正在发生某事（可能与逻辑状态无关），有时是解决问题的最佳方式。
+
+由于我们处理的是两种状态，所以有时候它们不会同步。将对象标记为`dirty`将在下次渲染时同步其显示状态（如果它正在被缓存，则缓存会失效）。
 
 ```ts
 object.set({ dirty: true });
 ```
 
-Syncing its **logical** state is needed for user interactions.
+同步其逻辑状态对于用户交互是必要的。
 
 ```ts
 object.setCoords();
 ```
 
-## Objects
+### 对象
 
-Objects are shapes with a lifecycle that supports both the **logical** and the **visual** states.
+对象是具有支持逻辑和显示状态的、拥有生命周期的形状，也是FabricJS内操作的最频繁的目标。
 
-- `Path`
-- `Polyline`, `Polygon`
-- `Rect`
-- `Circle`, `Ellipse`
-- `Image`
-- `Text`, `IText`, `Textbox`
+- 路径  `Path`
+- 多边形 `Polyline`, `Polygon`
+- 矩形 `Rect`
+- 圆形、椭圆形 `Circle`, `Ellipse`
+- 图片 `Image`
+- 文本、富文本、文本框 `Text`, `IText`, `Textbox`
 
-## Interactions
+### 交互
 
-User interactions drive both **logical** and **visual** state changes.
-The standard fabric app is built mainly on interactions.
-As such there are many **events** to subscribe to in order to make it easier to achieve complex UX.
+用户交互驱动逻辑状态和显示状态的变化。
+
+标准的 Fabric 应用主要建立在交互之上。因此，为了更容易实现复杂的用户体验，很多时候需要订阅事件。
 
 ```ts
 object.on('eventName', ...);
 ```
 
-### Selection
+#### 选择（对象）
 
-Fabric supports the following selection modes out of the box:
+FabricJS 支持以下开箱即用的选择模式：
 
-- Single object selection
-- Area selection
-- Multi selection
+- 单个对象选择
+- 区域选择
+- 多选
 
-### Controls
+#### 控制操作
 
-Performing state changes on an object is done using its controls.
-Fabric exposes the following controls:
+在对象上执行状态更改是通过其控制操作完成的。FabricJS 公开以下控制操作：
 
-- scaling
-- rotating
-- resizing
-- skewing
-- translating action
+- 缩放
+- 旋转
+- 调整大小
+- 扭曲
+- 偏移
 
-The `Control` API is designed especially for creating custom controls and customizing existing ones.
+`Control`  API 是专门为创建自定义控制操作和自定义现有控制操作而设计的。
 
-### Drawing & Brushes
+#### 绘制和画笔
 
-The drawing interaction is controlled by `Canvas#freeDrawingBrush` and `Canvas#isDrawingMode`.
-Once the interaction completes an object is created => listen to the `path:created` event for it.
+绘制交互由 `Canvas.freeDrawingBrush` 和 `Canvas.isDrawingMode` 控制。一旦交互完成，就会创建一个对象，并且可以监听 `path:created` 事件。
 
-Available brushes:
+可用画笔：
 
-- `CircleBrush`
-- `PatternBrush`
-- `PencilBrush`
-- `SprayBrush`
+- 圆形画笔 `CircleBrush`
+- 图案画笔 `PatternBrush`
+- 铅笔画笔 `PencilBrush`
+- 喷溅画笔 `SprayBrush`
 
-### Zoom, Pan & Viewport interactions
+#### 缩放、平移和视口交互
 
-Fabric doesn't support these interaction out of the box.
-Check out the demo.
+FabricJS 不支持在画布外进行这些交互。请查看演示,持续更新中......。
 
-### Animations
+#### 动画
 
-Animations are another form of state change.
-It is possible to animate anything in fabric as long as you sync the state properly.
-Remember to cleanup after yourself by aborting running animations.
+动画是状态变化的一种形式。只要正确同步状态，就可以在 FabricJS 中对任何对象进行动画操作。
+记得在运行动画后进行清理。
 
-## Visual State
+### 显示状态
 
-### Rendering
+#### 渲染
 
-Rendering is the process in which a canvas or an object redraws itself.
-By doing so it syncs the **visual** state.
+渲染是画布或对象重新绘制自己的过程。通过这样做，才能同步显示状态。
 
-Keep in mind that rendering can be expensive and therefore can lead to a drop in performance.
+请注意，渲染可能会很耗时，并且可能导致性能下降。
 
-Rendering is performed in the parent plane, see [transformations](#transformations).
+渲染是在父平面上进行的，参见[变形](/doc/Understanding_FabricJS/1_Transformations)。
 
-Objects need a reference to canvas for proper rendering (handled by fabric under the hood).
+对象需要指定一个画布才能进行正确的渲染（由 Fabric 在底层处理）。
 
-#### `renderAll` vs. `requestRenderAll`
+##### `renderAll` vs. `requestRenderAll`
 
-`renderAll` is sync, `requestRenderAll` is not, both render the canvas.
-`requestRenderAll` first request an animation frame before rendering.
-Calling `requestRenderAll` repeatedly will have no effect as long as rendering has not started.
+`renderAll` 是同步的， `requestRenderAll` 不是，两者都用于渲染画布。 `requestRenderAll` 首先请求动画的一帧，然后进行渲染。只要渲染尚未开始，重复调用 `requestRenderAll` 将没有效果。
 
-### Caching
+#### 缓存
 
-Caching means rendering an object onto a standalone canvas (called a cache). Then, when rendering occurs we can pull the cache and render it instead of redrawing the object.
+缓存意味着将对象渲染到一个独立的画布（称为缓存）。然后，当发生渲染时，我们可以拉取缓存并渲染它，而不是重新绘制对象。
 
-Caching is used for 2 reasons:
+缓存用于两个原因：
 
-- Performance\
-  We save on redrawing the object if its state did not change.
+- 性能：如果对象没有改变，就无需重绘。
+- 上下文隔离：执行复杂的渲染，如裁剪、过滤、使用 `globalCompositeOperation` 等，需要一个隔离的上下文来渲染，以确保操作保持隔离，不会影响整个画布，因此我们使用缓存。
+  
+### I/O
 
-- Context Isolation\
-  Performing complex rendering such as clipping, filtering, using `globalCompositeOperation` etc. need an isolated context to render on in order for the operation to remain isolated and not to affect the entire canvas, so we use the cache.
+Fabric 支持 JSON 和 SVG 序列化。查看：
 
-## I/O
-
-Fabric supports `JSON` and `SVG` serialization.
-Take a look at:
-
-|            | In            | Out             |
+|            | 导入           | 导出            |
 | ---------- | ------------- | --------------- |
 | **`JSON`** | `fromObject`  | `toObject`      |
 | **`SVG`**  | `fromElement` | `toSVG`         |
 | **`PDF`**  | `N/A`         | Use node canvas |
 
-Use the `classRegistry` to register your own classes for parsing.
+使用 `classRegistry` 来注册你自己的解析类。
 
-If you encounter issues with serialization try changing `NUM_FRACTION_DIGITS`.
+如果您在序列化时遇到问题，请尝试更改 `NUM_FRACTION_DIGITS` 。
 
-## Customization, Subclassing & Mutation
+### 定制， 子类与变异
 
 ```ts
 // subclass
@@ -171,5 +159,5 @@ fabric.Object.getDefaults = function() {
         ...
     }
 }
-
 ```
+

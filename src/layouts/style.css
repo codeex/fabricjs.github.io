@@ -1,10 +1,32 @@
+
+    @tailwind base;
+@tailwind components;
+@tailwind utilities;
 @font-face {
-  font-family: 'LXGW WenKai';
-  src:url('/assets/fonts/LXGWWenKaiMonoLite-Regular.ttf');
-  font-weight:normal;
-  font-style:normal;
-  font-display:swap;
-}
+      font-family: 'LXGW WenKai';
+      src:url('/assets/fonts/LXGWWenKaiMonoLite-Regular.ttf');
+      font-weight:normal;
+      font-style:normal;
+      font-display:swap;
+    }
+
+  @font-face {
+    font-family: 'LXGW WenKai Mono';
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url(/assets/fonts/LXGWWenKaiMonoLite-Medium.ttf);
+  }
+
+  
+article {
+		ul {
+			@apply list-disc mx-6 my-2;
+		}
+    code{
+      @apply bg-gray-100 text-red-500 font-mono select-text;
+    }
+	}
 strong {
 text-shadow: 0.5px 0;
 }
@@ -13,7 +35,7 @@ text-shadow: 0.5px 0;
       margin-bottom: 0;
     }
   }
-  
+ 
   /* ---------------------------
   ###   Generic page styling   |
   ----------------------------*/

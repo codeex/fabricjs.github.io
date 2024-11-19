@@ -1,24 +1,24 @@
 ---
 date: '2020-12-23'
-title: 'Text on path'
-description: 'Add text on paths'
+title: '路径文字'
+description: '增加文字到路径中绘制'
 thumbnail: 'text-on-paths.png'
-tags: ['text', 'path']
+tags: ['文本', '路径']
 ---
 
 import { TextOnPath } from './TextOnPath';
 
-This is an unfinished feature in FabricJS
-You can specify a fabric.Path property for the text, called path, that will make the text render curved, following the path.
-The feature is new, and has a lot of edge cases to be solved and improved.
+这是 FabricJS 中一个未完成的功能  
+您可以为文本指定一个名为 `path` 的 `fabric.Path` 属性，这样文本就会沿着路径弯曲渲染。  
+这个功能还很新，有很多问题案例需要解决和改进。
 
-In this demo we are using free drawing to draw a path, and then we inspect the path and try to calculate the best font size to fit the text to the path.
+在这个示例中，我们使用自由绘制来绘制路径，然后检查路径并尝试计算最佳字体大小，以使文本适应路径。
 
-We are using the event `before:path:created` to access the path before it gets added to the canvas, calculate an approximate fontSize that will work on that path length, then add the text to the canvas.
+我们使用事件 `before:path:created` 来在路径添加到画布之前访问它，计算一个大致的字体大小，使其适应路径的长度，然后将文本添加到画布上。
 
-Then are using `path:created` to remove the path from the canvas.
+接着，我们使用 `path:created` 来将路径从画布上移除。
 
-### On the canvas below use your mouse to draw something
+### 在下面的画布上，使用鼠标绘制一些内容
 
 <canvas id="canvas" width="500" height="400" ></canvas>
 <TextOnPath client:idle />

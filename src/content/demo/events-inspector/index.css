@@ -46,7 +46,7 @@
   overflow-y: scroll;
   overflow-x: scroll;
   font-family: monospace;
-  font-size: 11px;
+  font-size: 14px;
 }
 #drag-me {
   display: inline-block;

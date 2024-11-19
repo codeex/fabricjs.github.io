@@ -297,52 +297,52 @@ export const EventInspectorUI = () => {
     <>
       <div className="demo-main">
         <div className="column-main">
-          <p>To avoid event spamming, you can disable the checkboxs below.</p>
+          <p>为了避免事件滥用，您可以禁用下面的复选框。</p>
           <div>
             <label htmlFor="toggle">
               <input type="checkbox" id="toggle" />
-              All events
+              所有事件
             </label>
 
             <label htmlFor="move">
               <input type="checkbox" id="move" />
-              Movement events
+              移动事件
             </label>
             <label htmlFor="dragover">
               <input type="checkbox" id="dragover" />
-              DragOver
+              拖出
             </label>
 
             <label htmlFor="canvas_events">
               <input type="checkbox" id="canvas_events" />
-              Canvas
+              画布
             </label>
 
             <label htmlFor="green">
               <input type="checkbox" id="green" />
-              Green
+              绿色
             </label>
 
             <label htmlFor="red">
               <input type="checkbox" id="red" />
-              Red
+              红
             </label>
 
             <label htmlFor="blue">
               <input type="checkbox" id="blue" />
-              Blue
+              蓝
             </label>
 
             <label htmlFor="black">
               <input type="checkbox" id="black" />
-              Black
+              黑
             </label>
           </div>
 
           <div className="demo-body">
             <canvas id="c1" width="400" height="400"></canvas>
             <div>
-              Drag me on the canvas
+              在画布上拖我
               <br />
               <br />
               <div
@@ -355,19 +355,19 @@ export const EventInspectorUI = () => {
             </div>
           </div>
           <div id="log1">&nbsp;</div>
-          <button id="clear_log">clear log</button>
+          <button class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded" id="clear_log">清除日志</button>
         </div>
         <div className="column-events">
           <div id="observing-events-log">
-            <strong>Observing these events</strong>
+            <strong>观察这些事件</strong>
           </div>
         </div>
         <div className="column-events">
           <div id="observing-events-log-obj">
-            <strong>Objects events</strong>
+            <strong>对象事件</strong>
           </div>
           <div id="non-observing-events-log">
-            <strong>Other available events</strong>
+            <strong>其他可用事件</strong>
           </div>
         </div>
       </div>
