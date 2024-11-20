@@ -126,7 +126,7 @@ Fabric 支持 JSON 和 SVG 序列化。查看：
 
 使用 `classRegistry` 来注册你自己的解析类。
 
-如果您在序列化时遇到问题，请尝试更改 `NUM_FRACTION_DIGITS` 。
+如果你在序列化时遇到问题，请尝试更改 `NUM_FRACTION_DIGITS` 。
 
 ### 定制， 子类与变异
 
@@ -149,12 +149,12 @@ class MyRect extends Rect {
 classRegistry.setClass(MyRect);
 
 // prototype mutation
-fabric.Object.prototype.someMethod = function() {
+fabric.FabricObject.prototype.someMethod = function() {
     ...
 }
 
 // override default values
-fabric.Object.getDefaults = function() {
+fabric.FabricObject.getDefaults = function() {
     return {
         ...
     }

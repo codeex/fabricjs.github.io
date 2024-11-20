@@ -1,7 +1,7 @@
 ---
-date: '2012-08-12'
-description: 'Understanding what FabricJS is in order to better use it in your projects'
-title: Introduction to Fabric.js. Part 3
+date: '2024-11-20'
+description: '理解什么是FabricJS，更好地在你的项目中使用FabricJS'
+title: Fabric.js简介：第3部分
 ---
 
 We've covered most of the basics in [first](/fdocs/old-docs/fabric-intro-part-1) and [second](/docs/old-docs/fabric-intro-part-2) parts of this series. Let's move on to the more advanced stuf!
@@ -390,7 +390,7 @@ First argument is the SVG string, second one is the callback function. The callb
 
 ### Subclassing
 
-Since Fabric is built in a truly object-oriented fashion, it's designed to make subclassing and extension simple and natural. As you know from 1st part of this series, there's an existing hierarchy of objects in Fabric. All 2D objects (paths, images, text, etc.) inherit from `fabric.Object`, and some "classes" — like `fabric.IText` — even form 3-level inheritance.
+Since Fabric is built in a truly object-oriented fashion, it's designed to make subclassing and extension simple and natural. As you know from 1st part of this series, there's an existing hierarchy of objects in Fabric. All 2D objects (paths, images, text, etc.) inherit from `fabric.FabricObject`, and some "classes" — like `fabric.IText` — even form 3-level inheritance.
 
 So how would we go about subclassing one of the existing "classes" in Fabric? Or maybe even creating our own?
 
@@ -525,14 +525,14 @@ In order for this class to be cloned and saved/restore, you need to add a \`from
 ```js
 // standard options type:
 fabric.labeledRect.fromObject = function(object, callback) {
-  return fabric.Object.\_fromObject('LabeledRect', object, callback);
+  return fabric.FabricObject.\_fromObject('LabeledRect', object, callback);
 }
 ...
 // argument + options type:
 // in this example aProp is the property in the object that contains the value
 // that goes in someValue in \`new fabric.MyClass(someValue, options)\`
 fabric.labeledRect.fromObject = function(object, callback) {
-  return fabric.Object.\_fromObject('LabeledRect', object, callback, 'aProp');
+  return fabric.FabricObject.\_fromObject('LabeledRect', object, callback, 'aProp');
 }
 ```
 On this note, I'm wrapping up the 3rd installment of this series, in which we dived into some of the more advanced aspects of Fabric. With help of groups, classes and (de)serialization you can take your app to a whole new level.

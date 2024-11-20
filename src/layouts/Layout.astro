@@ -1,5 +1,6 @@
 ---
 import Header from '../components/Header/Header.astro';
+import './tailwind.css';
 import './style.css';
 import './colorvars.css';
 import CarbonAd from '../components/CarbonAd/InlineCarbonAd';
@@ -23,10 +24,27 @@ const { title } = Astro.props;
 		<meta name="copyright" content="版权所有2024-2030 webmote,codeex" />
 		<meta
 			name="keywords"
-			content="fabric,fabricjs,fabricjs.com,canvas,javascript,vue,react,绘图,画板,类库,游戏,流程图,flowchart,动画,画布,教程,学习"
+			content="fabric,fabricjs,fabricjs中文网站,fabricjs中文文档,fabricjs.com,canvas,javascript,vue,react,绘图,画板,类库,游戏,流程图,flowchart,动画,画布,教程,学习"
 		/>
 		<meta name="generator" content={Astro.generator} />
 		<title>{title}</title>
+		<script>
+			type Theme = 'auto' | 'dark' | 'light';
+			/** Key in `localStorage` to store color theme preference at. */
+			const storageKey = 'starlight-theme';
+			/** Get a typesafe theme string from any JS value (unknown values are coerced to `'auto'`). */
+			const parseTheme = (theme: unknown): Theme =>
+				theme === 'auto' || theme === 'dark' || theme === 'light'
+					? theme
+					: 'auto';
+
+			/** Load the user’s preference from `localStorage`. */
+			const theme = parseTheme(
+				typeof localStorage !== 'undefined' && localStorage.getItem(storageKey)
+			);
+			document.documentElement.dataset.theme = theme;
+			console.log(theme);
+		</script>
 	</head>
 	<body>
 		<div id="main-content"></div>

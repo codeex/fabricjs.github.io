@@ -1,7 +1,11 @@
+:root{
+--sl-color-bg-nav: var(--sl-color-gray-3);
+}
 
-    @tailwind base;
-@tailwind components;
-@tailwind utilities;
+:root[data-theme=light]{
+--sl-color-bg-nav: var(--sl-color-gray-7);
+}
+             
 @font-face {
       font-family: 'LXGW WenKai';
       src:url('/assets/fonts/LXGWWenKaiMonoLite-Regular.ttf');
@@ -19,17 +23,10 @@
   }
 
   
-article {
-		ul {
-			@apply list-disc mx-6 my-2;
-		}
-    code{
-      @apply bg-gray-100 text-red-500 font-mono select-text;
-    }
-	}
-strong {
-text-shadow: 0.5px 0;
-}
+
+  strong {
+    text-shadow: 0.5px 0;
+  }
   @media (min-width: 800px) and (orientation: landscape) {
     body {
       margin-bottom: 0;
@@ -48,7 +45,26 @@ text-shadow: 0.5px 0;
   ::selection {
     background-color: transparent;
   }
-  
+  article {
+		ul {
+			@apply list-disc mx-6 my-2;
+		}
+    code{      
+      @apply bg-gray-100 text-red-500 font-mono select-text;
+    }
+    code::selection{
+       background-color: blue;
+       color: white;
+    }
+    .code::selection{
+       background-color: blue;
+       color: white;
+    }
+    .code span::selection{
+       background-color: blue;
+       color: white;
+    }
+	}
   html {
     height: 100%;
   }
@@ -76,7 +92,8 @@ text-shadow: 0.5px 0;
   a {
     text-decoration: none;
     color: var(--primary-color); /*#0b9,05a;font-style:italic*/
-  }
+  }  
+
   a:active,
   *:active {
     outline: none;

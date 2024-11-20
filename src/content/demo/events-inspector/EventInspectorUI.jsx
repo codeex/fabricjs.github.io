@@ -297,7 +297,7 @@ export const EventInspectorUI = () => {
     <>
       <div className="demo-main">
         <div className="column-main">
-          <p>为了避免事件滥用，您可以禁用下面的复选框。</p>
+          <p>为了避免事件滥用，你可以禁用下面的复选框。</p>
           <div>
             <label htmlFor="toggle">
               <input type="checkbox" id="toggle" />

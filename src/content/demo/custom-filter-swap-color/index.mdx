@@ -10,10 +10,10 @@ import { InputEventAttacher } from './CustomFilter'
 
 ### 如何创建一个自定义滤镜来处理图像
 
-Fabric 提供了一个模板文件来帮助您开始创建新滤镜。  
+Fabric 提供了一个模板文件来帮助你开始创建新滤镜。  
 我决定创建一个叫做 **SwapColor** 的滤镜，因此我从这个文件 [boilerplate](https://github.com/fabricjs/fabric.js/blob/master/src/filters/Boilerplate.ts) 复制了它，然后第一步就是将所有的 `MyFilter` 替换为 `SwapColor`。
 
-接下来开始编写您的滤镜代码。
+接下来开始编写你的滤镜代码。
 
 这个滤镜的基本思路是简单地从图像中选择一种颜色并将其与另一种颜色进行交换，如果两者完全匹配。  
 我们需要为 JS 部分和 WEBGL 部分编写代码。
@@ -60,8 +60,8 @@ toObject() {
 
 ### 2DCanvas 中的像素交换操作
 
-在滤镜类中，`applyTo2d` 是您需要查看的函数，用于支持标准的非 WebGL 模式。  
-如果您在浏览器中运行，这段代码通常不需要，只有在运行在 Node 环境时才会有用。不过，FabricJS 现在同时支持这两种模式，因此，如果您想编写一个滤镜，最好同时处理这两种模式。
+在滤镜类中，`applyTo2d` 是你需要查看的函数，用于支持标准的非 WebGL 模式。  
+如果你在浏览器中运行，这段代码通常不需要，只有在运行在 Node 环境时才会有用。不过，FabricJS 现在同时支持这两种模式，因此，如果你想编写一个滤镜，最好同时处理这两种模式。
 
 逻辑很简单，对于每个像素，如果颜色匹配，则将其与目标颜色交换。  
 为了判断颜色是否匹配，我们使用 `fabric.Color` 来解析 CSS 颜色字符串，并比较前三个分量。
@@ -93,11 +93,11 @@ applyTo2d(options: T2DPipelineState) {
 
 ### WebGL 部分
 
-如果您对 WebGL 熟悉，这部分内容会显得非常简单；如果不熟悉的话，需要掌握一些概念。  
+如果你对 WebGL 熟悉，这部分内容会显得非常简单；如果不熟悉的话，需要掌握一些概念。  
 **免责声明**：我并不擅长 WebGL，这段代码反映了 FabricJS 如何将基本功能封装成可复用的组件。
 
-首先，您需要设置 WebGL 着色器中的变量注入，这是通过 `getUniformLocations` 和 `sendUniformData` 两个函数完成的。  
-`getUniformLocations` 用来定义这些变量在着色器中的名称，而 `sendUniformData` 则负责将数据绑定到这些变量上。编写 `sendUniformData` 显然是最困难的部分，因为您必须了解您使用的变量类型。在我们的例子中，我们正在将颜色字符串转换为一个介于 0 和 1 之间的 4 个数字的数组，为此我们需要使用 `gl.uniform4fv` 函数。
+首先，你需要设置 WebGL 着色器中的变量注入，这是通过 `getUniformLocations` 和 `sendUniformData` 两个函数完成的。  
+`getUniformLocations` 用来定义这些变量在着色器中的名称，而 `sendUniformData` 则负责将数据绑定到这些变量上。编写 `sendUniformData` 显然是最困难的部分，因为你必须了解你使用的变量类型。在我们的例子中，我们正在将颜色字符串转换为一个介于 0 和 1 之间的 4 个数字的数组，为此我们需要使用 `gl.uniform4fv` 函数。
 
 ```ts
 /**

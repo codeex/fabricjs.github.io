@@ -3,7 +3,7 @@ const pathname = decodeURIComponent(Astro.url.pathname || ''); //解码
 const postName = pathname?.split('/').pop();
 
 const giscusConfig = {
-	repo: 'codeex/fabricjs-likes', // 您的 GitHub 仓库
+	repo: 'codeex/fabricjs-likes', // 你的 GitHub 仓库
 	repoId: 'R_kgDONRhaag', // 仓库 ID
 	category: 'General', // GitHub Discussions 分类
 	categoryId: 'DIC_kwDONRhaas4CkZTp', // 分类 ID
@@ -66,10 +66,13 @@ const giscusConfig = {
 	}
 
 	createGusicScript();
-	document.querySelector('#theme-btn')?.addEventListener('click', () => {
-		const theme = getCurrentTheme();
-		sendMessage({
-			setConfig: { theme: theme == 'light' ? 'dark_dimmed' : 'light' },
+	document
+		.querySelector('starlight-theme-select select')
+		?.addEventListener('change', () => {
+			const theme = getCurrentTheme();
+
+			sendMessage({
+				setConfig: { theme: theme == 'light' ? 'dark_dimmed' : 'light' },
+			});
 		});
-	});
 </script>

@@ -1,7 +1,7 @@
 ---
-date: '2017-06-17'
-description: 'Understanding what FabricJS is in order to better use it in your projects'
-title: Introduction to Fabric.js. Part 5
+date: '2024-11-20'
+description: '理解什么是FabricJS，更好地在你的项目中使用FabricJS'
+title: Fabric.js简介：第5部分
 ---
 
 ## Zoom and pan, introduction to FabricJS part 5

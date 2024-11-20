@@ -7,7 +7,7 @@ title: "PencilBrush"
 
 ## See
 
-[demo](http://fabricjs.com/freedrawing|Freedrawing)
+[demo](http://fabricjs.cc/freedrawing|Freedrawing)
 
 ## Extends
 

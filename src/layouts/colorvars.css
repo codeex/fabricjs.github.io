@@ -14,6 +14,7 @@
     --font-color-light2: #7b93ab;
     --font-color-light: #5a7896;
     --font-color-normal: #445a71;
+    --font-color-nav: #ccc;
     --font-color-dark: #2d3c4b;
     --font-color-dark2: #171e26;
     --border-radius-normal: 6px;
@@ -23,51 +24,39 @@
       for starlight header
     */
     --sl-nav-height: 66px;
-    --sl-nav-pad-y: 0px;
-  }
-
+    --sl-nav-pad-y: 0px;    
+    /* --sl-color-bg-nav: #000; */
+  } 
+/* Dark mode colors. */
+:root {
+	--sl-color-accent-low: #131e4f;
+	--sl-color-accent: #3447ff;
+	--sl-color-accent-high: #b3c7ff;
+	--sl-color-white: #ffffff;
+	--sl-color-gray-1: #eceef2;
+	--sl-color-gray-2: #c0c2c7;
+	--sl-color-gray-3: #888b96;
+	--sl-color-gray-4: #545861;
+	--sl-color-gray-5: #353841;
+	--sl-color-gray-6: #24272f;
+	--sl-color-black: #17181c;
+  --sl-color-bg-nav: var(--sl-color-gray-3);
+}
+/* Light mode colors. */
 :root[data-theme='light'] {
-    /* for STARLIGHT */
-  --sl-color-white:  var(--font-color-dark2);
-  --sl-color-accent-high: var(--primary-color);
-	--sl-color-accent: var(--primary-color);
-	--sl-color-accent-low: var(--primary-color-tint);
-
-	--sl-color-text: var(--font-color-normal);
-	--sl-color-text-accent: var(--sl-color-accent-high);
-	--sl-color-text-invert: var(--sl-color-accent-low);
-
-	--sl-color-bg-nav: var(--sl-color-gray-7);
-	--sl-color-bg-sidebar: var(--sl-color-bg);
-	--sl-color-bg-inline-code: var(--sl-color-gray-6);
-	--sl-color-bg-accent: var(--sl-color-accent);
-	--sl-color-hairline-light: var(--sl-color-gray-6);
-	--sl-color-hairline-shade: var(--sl-color-gray-6);
-  --sl-color-bg-nav: white;
-
-    /* text sizes starlight */
-    	/* Text size and line height */
-	--sl-text-xs: 0.8125rem; /* 13px */
-	--sl-text-sm: 0.875rem; /* 14px */
-	--sl-text-base: 1rem; /* 16px */
-	--sl-text-lg: 1.125rem; /* 18px */
-	--sl-text-xl: 1.25rem; /* 20px */
-	--sl-text-2xl: 1.5rem; /* 24px */
-	--sl-text-3xl: 1.8125rem; /* 29px */
-	--sl-text-4xl: 2.1875rem; /* 35px */
-	--sl-text-5xl: 2.625rem; /* 42px */
-	--sl-text-6xl: 4rem; /* 64px */
-
-	--sl-text-body: var(--sl-text-base);
-	--sl-text-body-sm: var(--sl-text-xs);
-	--sl-text-code: var(--sl-text-sm);
-	--sl-text-code-sm: var(--sl-text-xs);
-	--sl-text-h1: var(--sl-text-4xl);
-	--sl-text-h2: var(--sl-text-3xl);
-	--sl-text-h3: var(--sl-text-2xl);
-	--sl-text-h4: var(--sl-text-xl);
-	--sl-text-h5: var(--sl-text-lg);
-  }
+	--sl-color-accent-low: #c7d6ff;
+	--sl-color-accent: #364bff;
+	--sl-color-accent-high: #182775;
+	--sl-color-white: #17181c;
+	--sl-color-gray-1: #24272f;
+	--sl-color-gray-2: #353841;
+	--sl-color-gray-3: #545861;
+	--sl-color-gray-4: #888b96;
+	--sl-color-gray-5: #c0c2c7;
+	--sl-color-gray-6: #eceef2;
+	--sl-color-gray-7: #f5f6f8;
+	--sl-color-black: #ffffff;
+}
 
   :root[data-theme='dark'] {
 
@@ -93,23 +82,7 @@
       margin-bottom: 0;
     }
   }
-
-  a {
-    text-decoration: none;
-    color: var(--primary-color);
-  }
-
-  .sidebar-content a {
-    color: var(--font-color-normal);
-  }
-
-  a:active,
-  *:active {
-    outline: none;
-  }
-
-  a:focus,
-  *:focus {
-    outline: 0; /*-moz-outline-style:none;*/
-    outline-style: none;
-  }
+.header nav a {
+  text-decoration: none;
+  color: var(--primary-color); /*#0b9,05a;font-style:italic*/
+} 

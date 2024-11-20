@@ -1,7 +1,7 @@
 ---
-date: '2012-12-21'
-description: 'Understanding what FabricJS is in order to better use it in your projects'
-title: Introduction to Fabric.js. Part 4
+date: '2024-11-20'
+description: '理解什么是FabricJS，更好地在你的项目中使用FabricJS'
+title: Fabric.js简介：第4部分
 ---
 
 ## Introduction to Fabric.js. Part 4.

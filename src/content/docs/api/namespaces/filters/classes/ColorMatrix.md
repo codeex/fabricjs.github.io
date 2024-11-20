@@ -9,7 +9,7 @@ Color Matrix filter class
 
 ## See
 
- - [demo](http://fabricjs.com/image-filters|ImageFilters)
+ - [demo](http://fabricjs.cc/image-filters|ImageFilters)
  - {@Link http://phoboslab.org/log/2013/11/fast-image-filters-with-webgl demo}
 
 ## Example

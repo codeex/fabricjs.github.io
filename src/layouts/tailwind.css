@@ -8,3 +8,17 @@
  .sl-markdown-content a:hover{
     @apply text-blue-400;
   }
+  
+
+  nav a:active
+   {
+    outline: none;
+  }
+  nav a:focus,
+  {
+    outline: 0; /*-moz-outline-style:none;*/
+    outline-style: none;
+  }
+  nav a:hover{
+    font-weight: 600;
+  }

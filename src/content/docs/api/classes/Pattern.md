@@ -7,8 +7,8 @@ title: "Pattern"
 
 ## See
 
- - [demo](http://fabricjs.com/patterns)
- - [demo](http://fabricjs.com/dynamic-patterns)
+ - [demo](http://fabricjs.cc/patterns)
+ - [demo](http://fabricjs.cc/dynamic-patterns)
 
 ## Constructors
 
