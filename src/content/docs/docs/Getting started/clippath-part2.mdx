@@ -1,0 +1,24 @@
+---
+date: 2018-06-23
+description: ClipPath 更多高级用法
+title: 简介：8.剪裁路径更多高级用法
+---
+import { Example1, Example2, Example3 } from './clippath-part2/clippath-part2';
+
+### 折叠剪裁路径
+
+clipTo和canvas.clip（）用法的一个问题是您一次最多只能有一个clipPath。 
+
+通过此实现，clippaths可以具有自己的剪切路径。尽管手动编程不太直观，但它允许将clipPaths与gheter相交。
+
+<Example1 client:idle />
+
+组内对象中的ClipPath应与组本身的clipPath隔离：
+
+<Example2 client:idle />
+
+### 剪裁文本
+
+同样，使用clipTo也无法进行文本剪切，因此开发人员通常不得不依靠这种模式。
+
+<Example3 client:idle />

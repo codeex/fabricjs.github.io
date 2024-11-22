@@ -1,7 +1,7 @@
 ---
 date: '2016-05-16'
-description: 'Changelog for version 1 of Fabric.JS'
-title: 'Changelog v1'
+description: '版本更新记录 V1'
+title: '版本更新记录 v1'
 ---
 
 ## Fabric.js release highlights (v1)

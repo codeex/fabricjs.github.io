@@ -1,19 +1,20 @@
 ---
 date: '2016-11-26'
-description: 'Caching of object, properties and beahvior'
-title: Caching of object, properties and beahvior
+description: '对象，属性和行为的缓存'
+title: 对象，属性和行为的缓存
 ---
 import { Example1, Example2, Example3 } from './fabric-object-caching/fabric-object-caching.jsx';
 
-### How does it work?
+### 怎么工作的?
 
-When fabric object caching is active, the objects you paint on canvas are actually pre painted on another smaller offscreen canvas, as big as the object pixel dimension itself. During the `render` method this pre painted canvas gets copied on the main canvas with a `drawImage` operation.
+当 Fabric 对象缓存（object caching）启用时，实际上你在画布上绘制的对象会先在另一个较小的离屏画布上进行预绘制，画布的大小与对象的像素尺寸相同。在 `render` 方法中，这个预绘制的画布会通过 `drawImage` 操作被复制到主画布上。
 
-That means that during `drag` `rotate` `skew` `scale` operations the object is not redrawn on canvas, but just its copied cached image gets drawn over the canvas.
+这意味着，在进行 `drag`（拖拽）、`rotate`（旋转）、`skew`（倾斜）和 `scale`（缩放）操作时，图像并不会重新绘制到画布上，而只是将其已缓存的图像绘制到画布上。
 
-### How can I tweak/customize it?
+### 如何调整/自定义这一功能？
 
-This feature comes with 3 properties to use it in different ways:
+这个功能提供了 3 个属性，用来以不同的方式使用它：
+
 ```js
 /**
  * When `true`, object is cached on an additional canvas.
@@ -103,75 +104,78 @@ fabric.maxCacheSideLimit = 4096;
 fabric.minCacheSideLimit = 256;
 ```
 
-`objectCaching` is the main properties, default to true for browsers, false for node, it enables objectCaching at object level.  
-`statefullCache` This property rule if fabric should autocheck if is time to redraw the cached copy or if the dev shoud manually invalidate it. this property is default to false. More on this later.  
-`noScaleCache` default to true, disable cache regeneration for scale operation. It can be enabled to avoid blurry effects for big scaling.  
-`cacheProperties` Every time Object.set(key, value) is called, key is searched in this array of properties. If found it mark the object as needing a re render. StatefullCache set to true instead exentesively compare all the keys with a copy of the old values at each render.  
-`dirty` is a simple flag that force a cache rerender at next render method, and is set to false automatically after cache regeneration. `fabric.perfLimitSizeTotal` Max size in pixel area of generated cache canvases.  
-`fabric.maxCacheSideLimit` Max size in pixel of the largest side of the cache canvas. ( numbers bigger than 5000 breaks IE )  
-`fabric.minCacheSideLimit` Max size in pixel of the minimal side of the cache canvas. ( numbers smaller than 256 can disable gpu compositing. to be verified )  
+`objectCaching` 是主要属性，默认在浏览器中为 `true`，在 Node 环境中为 `false`，它在对象级别启用对象缓存（object caching）。  
+`statefullCache` 这个属性决定 Fabric 是否自动检查是否该重新绘制缓存的副本，或者开发者是否需要手动使其失效。此属性默认值为 `false`。稍后会进一步介绍。  
+`noScaleCache` 默认值为 `true`，禁用缩放操作时的缓存重新生成。启用它可以避免在进行大规模缩放时出现模糊效果。  
+`cacheProperties` 每次调用 `Object.set(key, value)` 时，`key` 会在这个属性数组中进行查找。如果找到，它会标记对象为需要重新渲染。设置 `statefullCache` 为 `true` 会避免每次渲染时比较所有键与旧值的副本。  
+`dirty` 是一个简单的标志，强制在下次渲染方法时重新生成缓存，并且在缓存重建后自动将其设置为 `false`。  
+`fabric.perfLimitSizeTotal` 生成的缓存画布的最大像素面积。  
+`fabric.maxCacheSideLimit` 缓存画布最大的一边的像素尺寸。（大于 5000 的数值会在 IE 中导致崩溃）  
+`fabric.minCacheSideLimit` 缓存画布最小的一边的像素尺寸。（小于 256 的数值可能会禁用 GPU 合成，需要验证）
 
-Example of a cache canvas that is bigger than the drawn object (256x256 is the minimum by default):
+### 缓存画布示例
+
+这是一个大于绘制对象的缓存画布示例（默认情况下，最小尺寸为 256x256）：
 
 ![](/article_assets/carMinCache.png)
 
-Example of the biggest size cache canvas at default values ( 2 Mega pixels ). Scroll to see something:
+这是一个最大尺寸的缓存画布示例，使用默认值（2 百万像素）。滚动查看更多内容：
 
-### How much performance gain I get, are there any problems?
+### 性能提升有多少？是否会有问题？
 
-It depends on what your project looks like. Are you drawing just a bunch of circles, rects and simple polygons? Maybe you will not gain that much performance.  
-Are you importing and displaying large and complex svgs? well you will move from possibly shuttering to smooth. Is there any glich I should be aware of? Well you may not like the `noScaleCache` feature and that is why there is a flag to disable it.
+这取决于你的项目需求。如果你只是绘制一些圆形、矩形和简单的多边形，可能性能提升不会很大。  
+如果你正在导入并显示大量复杂的 SVG 图形，那么你可能会从卡顿变得更加流畅。是否会有任何问题？你可能不喜欢 `noScaleCache` 特性，因此可以选择禁用它。
 
-### What about compatibility problem with my current project? Should I update? Can I disable caching?
+### 如果与我当前的项目不兼容，我应该更新吗？可以禁用缓存吗？
 
-I would say yes, switch to 1.7.0, check if everything is fine. If not report any visual problem to issue tracker, you can still completly disable the feature everywhere doing:
+我建议更新到 1.7.0 版本，检查一切是否正常。如果不正常，报告任何视觉问题到 issue tracker，你仍然可以通过以下方式在你的项目中完全禁用该功能：
 
+```javascript
 fabric.Object.prototype.objectCaching = false;
-
-to override the standard value and cache will be disabled for your project.
-
-### Live samples
-
-Below you can see 2 fabric canvases. The left one is the default cached one, while the right one is drawn with cache disabled as it was on previous versions.  
-The canvases are loaded with heavy pathgroups, the snowwhite, the heaviest I could find is in 3 copies and makes the render speed cripple down. Try to drag around one of the shapes on the left or right canvas and notice the speed difference.
 
 <Example1 client:idle hideCode canvasStyle={{ display: 'inline-block'}} />
 <Example2 client:idle hideCode canvasStyle={{ display: 'inline-block'}} />
 
-Also spot differences in scaling between `noScaleCache` with values true or false.  
-In canvases below Left canvas is `false`, that means that during the scaling tasnformation the obect is not regenerated. if you scale an object more than 3 times the original size you will notice blurring that then gets fixed with a new cached copy as soon as you perform a mouse up. Try it by yourself:
+你还可以观察到在 `noScaleCache` 设置为 `true` 或 `false` 时，缩放操作的差异。  
+
+在下面的画布中，左侧画布的 `noScaleCache` 设置为 `false`，这意味着在缩放变换期间对象不会被重新生成。如果你将对象缩放到原始大小的三倍以上，你会注意到模糊现象，直到你执行 `mouse up` 时，新的缓存副本才会修复这个问题。自己试试看：
+
 
 <Example3 client:idle hideCode />
 
 
-### When does the cache gets updated with a new version?
+### 缓存何时更新为新版本？
 
-Fabric has a hardcoded trigger to update the cache during the built in functions where the developer has no easy way to insert code.  
-Those situations are: `scaling`, `typing text`, `canvas global zoom`.  
-In all other cases, it's the developer that's changing some property of an object, and should therefore make sure to force a cache update by setting the object's `dirty` property to true when necessary. So calling `object.set('fill', 'red')` require no other actions. If for some reason you are not using the set method (for example in situation of text objects in which setting some properties triggers expensive functions) you will use the flag.  
-There is also a way to ask fabric to check at render time a change for properties. This is not expensive most of the time but I decided to leave it off because in crowded situations ( like spray brush or 1000+ svg paths ) it was expensive.  
-Groups and PathGroups are taken care of in this way:  
-When an object gets set a property, the property is checked, if it is in the `cacheProperties` array, the object and the group is set as dirty. If the property is in the `stateProperties` array, only the group is set as dirty.
+Fabric 有一个硬编码的触发机制，用于在开发者没有容易插入代码的内置函数中更新缓存。  
+这些情况包括：`缩放`、`输入文本`、`画布全局缩放`。  
+在其他所有情况下，由于开发者正在改变对象的某些属性，因此应该确保在必要时通过将对象的 `dirty` 属性设置为 `true` 来强制更新缓存。因此，调用 `object.set('fill', 'red')` 时不需要其他操作。如果由于某些原因你没有使用 `set` 方法（例如，在文本对象的情况下，设置某些属性会触发昂贵的函数），你需要使用该标志。  
+Fabric 还提供了一种方法，允许在渲染时检查属性的变化。这在大多数情况下不会很耗费性能，但我决定禁用它，因为在拥挤的情况下（如喷枪刷子或 1000+ 个 SVG 路径），会变得昂贵。  
 
-### How does fabric check for changes in custom subclasses with custom properties?
+`Groups` 和 `PathGroups` 是通过以下方式进行处理的：  
+当对象设置一个属性时，会检查该属性。如果它在 `cacheProperties` 数组中，对象和组都会被标记为 `dirty`。如果该属性在 `stateProperties` 数组中，则只有组会被标记为 `dirty`。
 
-Custom subclassing is one of the fabric strongest features in my opinion and object caching has been built with that in mind.. So there is an array defined called `cacheProperties` that contains a list of properties that get checked at every render when the property `statefullCache` is set true. (defaults to false).  
-The array looks like this:
+### 如何检查自定义子类与自定义属性的变化？
+
+自定义子类化是我认为 Fabric 最强大的功能之一，且对象缓存就是考虑到这一点而构建的。因此，Fabric 中定义了一个数组 `cacheProperties`，该数组包含一系列属性，当 `statefullCache` 属性设置为 `true` 时（默认为 `false`），这些属性会在每次渲染时被检查。  
+该数组的结构如下：
+
 ```js
   cacheProperties: (
     'fill stroke strokeWidth strokeDashArray width height' +
     ' strokeLineCap strokeLineJoin strokeMiterLimit fillRule backgroundColor'
   ).split(' '),
 ```
-and gets more properties in different sublcasses, for example rect adds `rx` and `ry` and so on. The properties are checked recursively, that means that at every change detected a copy of the property is saved, and at next render is compared deeply. Normally properties that need deep checks are gradients, patterns, path array, strokeDash. If your application make no use of some properties at all you can remove them from the cacheProperties array and make the check faster, or you can add your custom properties that influence rendering to have them checked.
+并且在不同的子类中会有更多的属性，例如 `rect` 类会增加 `rx` 和 `ry` 等等。属性是递归检查的，这意味着每次检测到变化时，会保存该属性的副本，并在下次渲染时进行深度比较。通常需要深度检查的属性包括渐变、图案、路径数组、`strokeDash`。如果你的应用程序根本不使用某些属性，你可以从 `cacheProperties` 数组中移除它们，以加快检查速度，或者你可以添加自定义属性，确保它们对渲染有影响并进行检查。
 
-### Gotchas
+### 常见问题
 
-Image is cut of of object bounding box: **YES**. There is an invisible canvas that keep a copy of the object. This canvas is sized with objects width/height. If width and height are not correct for the object we are trying to display, the image will be cut off. There is no other solution than disable the caching for the object or fix the problem.  
-Currently affected uses case:
+#### 图片被裁剪出对象的边界框：**是的**。  
+有一个不可见的画布保持着对象的副本。这个画布的大小与对象的宽度/高度相同。如果宽度和高度对于我们试图显示的对象不正确，那么图片会被裁剪。唯一的解决方法是禁用该对象的缓存，或者修复该问题。  
 
-- (mainly solved since 1.7.7) sometimes things can look blurry
-- (mainly solved since 1.7.8) paths with wrongly parsed command sequence (very few)
-- (mainly solved since 1.7.3) Text using custom fonts with very big ascender/descender and of wich canvas is not able to measure extension.
-- Groups not initialized correctly ( created empty and not updated after using the .add method, please use addWithUpdate)
-- Scaling events that reset scale and modify width/height, disable `noScaleCache`, set it to false
+当前影响的用例：
+
+- （自 1.7.7 起基本解决）有时可能看起来模糊
+- （自 1.7.8 起基本解决）路径解析命令顺序错误（非常少见）
+- （自 1.7.3 起基本解决）使用自定义字体的文本，其极大的 ascender/descender 值使得画布无法准确测量扩展。
+- 组没有正确初始化（创建为空并且在使用 `.add` 方法后没有更新，请使用 `addWithUpdate`）
+- 缩放事件重置缩放并修改宽度/高度，禁用 `noScaleCache`，将其设置为 `false`

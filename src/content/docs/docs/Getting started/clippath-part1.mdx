@@ -1,0 +1,36 @@
+---
+date: 2018-06-23
+description: 剪裁路径介绍，在图形和绘图上下文中，clipPath 用于定义一个区域，只有在这个区域内的部分才会被显示或绘制。简单来说，剪裁路径是通过指定一个形状或路径来限制绘制内容的可视区域。超出该区域的部分将被隐藏或剪裁掉。
+title: 简介：7.剪裁路径介绍
+sidebar:
+  order: 9
+---
+import { Example1, Example2, Example3 } from './clippath-part1/clippath-part1';
+
+### 新的剪裁路径属性（clipPath）
+
+在2.4.0中，我们为所有对象引入了clipPath属性。 ClipPath将替换`clipTo:funcion(){}`，以实现相同的灵活性，但具有更好的兼容性。 
+
+ClipPath需要对象缓存。
+
+在图形和绘图上下文中，clipPath 用于定义一个区域，只有在这个区域内的部分才会被显示或绘制。
+简单来说，剪裁路径是通过指定一个形状或路径来限制绘制内容的可视区域。超出该区域的部分将被隐藏或剪裁掉。
+
+### 怎么去使用
+
+
+让我们从一些基本示例开始，然后看看它的外观。
+ 在此第一个示例中，红色的rect被一个圆圈夹住，只有圆形内的部分可见。虽然不是很有用，但是基本功能是这样的。 
+
+:::tip
+请注意：clipPath从对象的中心开始定位，对象originX和originY不起任何作用，而clipPath originX和originY起作用。定位逻辑与fabric.Group相同。
+:::
+<Example1 client:idle />
+
+我们可以剪辑一个组:
+
+<Example2 client:idle />
+
+或者我们可以使用组进行剪辑。如果是组，请记住组中的每个对象在逻辑上或与其他对象成对，否则就不会有非零或奇数的裁剪规则。
+
+<Example3 client:idle />

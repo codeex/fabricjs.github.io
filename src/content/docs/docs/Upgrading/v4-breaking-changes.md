@@ -1,22 +1,23 @@
 ---
 date: '2020-07-10'
 description: A list of breaking changes from v3 to v4
-title: Upgrade to fabric 4.x
+title: 升级到 fabric 4.x
 ---
 
-`Canvas.uniScaleTransform` has been removed, `Canvas.uniformScaling` has been added.
-The property was poorly named, and its purpose was unclear.
-If `uniformScaling` is true, objects get scaled proportionally, if uniscaleKey is pressed, the behaviour get swapped. From true to false or from false to true. `Canvas.uniscaleKey` is the key that swaps the value of `Canvas.uniformScaling`.
+`Canvas.uniScaleTransform` 已被移除，取而代之的是 `Canvas.uniformScaling`。
+该属性命名不清晰，且其用途不明确。
+如果 `uniformScaling` 为 true，则对象按比例缩放；如果按下 `uniscaleKey`，行为会被交换，即从 true 到 false 或从 false 到 true。`Canvas.uniscaleKey` 是用来切换 `Canvas.uniformScaling` 值的键。
 
-`Object.lockUniScaling` has been removed. It was unclear how it should have interacted with the old `Canvas.uniformScaling` and the `uniscaleKey`.
+`Object.lockUniScaling` 已被移除。它与旧版的 `Canvas.uniformScaling` 和 `uniscaleKey` 的交互方式不明确，因此被废弃。
 
-`Object.hasRotatingPoint` has been removed. If you do not want an object to have the rotating control, set it to invisible or make a control set that does not have the control at all.
+`Object.hasRotatingPoint` 已被移除。如果不希望对象具有旋转控制点，可以将其设置为不可见，或者使用不包含该控制点的控制集。
 
-`Object.rotatingPointOffset` has been removed. You can now tweak the `offsetY` property of the `mtr` control of the standard control set, or of any other control.
+`Object.rotatingPointOffset` 已被移除。现在你可以调整标准控制集的 `mtr` 控制点的 `offsetY` 属性，或者任何其他控制点的偏移量。
 
-The function `Canvas.onBeforeScaleRotate` has been removed. Please subscribe to `Canvas.on('before:transform')` and move your code to the callback.
+`Canvas.onBeforeScaleRotate` 已被移除。请改为订阅 `Canvas.on('before:transform')` 事件，并将相关代码移动到回调函数中。
 
-`Object.setShadow` and `BaseBrush.setShadow` have been removed. Please use:
+`Object.setShadow` 和 `BaseBrush.setShadow` 已被移除。请使用以下方法替代：
+
 ```js
 // before
 Object.setShadow(options);

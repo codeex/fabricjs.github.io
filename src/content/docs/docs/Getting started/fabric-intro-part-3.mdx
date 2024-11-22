@@ -1,0 +1,586 @@
+---
+date: '2024-11-20'
+description: '理解什么是FabricJS，更好地在你的项目中使用FabricJS'
+title: 简介：3.组、序列化、子类化
+sidebar:
+  order: 5
+---
+import { FileTree, Steps } from '@astrojs/starlight/components';
+
+我们已经覆盖了大多数的基本知识在这个系列的 [第1部分](/docs/getting-started/fabric-intro-part-1/) 和 [第2部分](/docs/getting-started/fabric-intro-part-2/) ，接下来让我们玩点高级的!
+
+### 组
+
+![](/article_assets/8.png)
+
+我们首先要谈论的是组(groups)。组是Fabric最强大的功能之一。它们的确像是听起来的样子—一种将任何Fabric对象分组为单个实体的简单方法。
+
+我们为什么要这样做？当然是要将这些对象作为一个单元来使用！
+
+还记得如何用鼠标将画布上任意数量的Fabric对象组合在一起，形成一个选择吗？分组后，所有对象都可以一起移动甚至修改。他们组成一个小组。我们可以缩放该组，旋转甚至更改其外观属性-颜色，透明度，边框等。
+
+这正是组的用途，每当你在画布上看到这样的选择时，Fabric都会在幕后隐式创建一组对象。仅允许以编程方式提供使用组的权限。这就是fabric组的魅力，更多精彩实战，请关注[webmote](https://blog.csdn.net/codeex)。
+
+让我们创建一个由2个对象组成的组，即圆圈和文本：
+
+```js
+// 创建一个圆形对象
+const circle = new fabric.Circle({
+  radius: 100,
+  fill: '#eef',
+  scaleY: 0.5,
+  originX: 'center',
+  originY: 'center'
+});
+
+// 创建一个文本对象
+const text = new fabric.FabricText('hello world', {
+  fontSize: 30,
+  originX: 'center',
+  originY: 'center'
+});
+
+// 创建一个包含圆形和文本的组合对象
+const group = new fabric.Group([circle, text], {
+  left: 150,
+  top: 100,
+  angle: -10
+});
+
+// 将组合对象添加到画布
+canvas.add(group);
+
+
+```
+
+首先，我们创建了一个“ hello world”文本对象。设置originX和originY以'center'让它在组内居中; 默认情况下，组成员相对于组的左上角定向。然后，以100px半径的圆圈，填充“ #eef”颜色并垂直压缩（scaleY = 0.5）。然后fabric.Group，我们创建了一个实例，将这两个对象以数组形式传给它，并将其位置设置为150/100和-10角度。最后，将该组添加到画布上，就像其他任何对象一样（用`canvas.add()`）。
+
+瞧！你会在画布上看到一个看起来像椭圆的对象。注意，如何修改该对象，我们只是简单地更改了一个组的属性，为其提供了自定义的left，top和angle值。现在，你可以将此对象作为单个实体使用。
+
+![](/article_assets/3_1.png)
+
+现在我们在画布上有了一个组，让我们对其进行一些更改：
+
+```js
+// in order to use setFill named setter, you need to add the optional named setter/getter
+// code from src/util/named\_accessors.mixins.js
+group.item(0).set('fill', 'red');
+group.item(1).set({
+  text: 'trololo',
+  fill: 'white'
+});
+```
+
+发生了什么？我们正在通过`item()`方法访问组中的单个对象，并修改它们的属性。第一个对象是压缩的圆圈，第二个对象是文本。让我们看看发生了什么：
+
+![](/article_assets/3_2.png)
+
+你现在可能已经注意到的一件事很重要，那就是组中的所有对象都相对于组的中心定位。当我们更改文本对象的文本时，即使更改了宽度，它也保持居中。如果你不希望出现这种情况，则需要指定对象的left/top坐标。在这种情况下，将根据这些坐标将它们分组在一起。
+
+让我们创建3个圆并对其进行分组，使它们彼此水平放置：
+
+```js
+var circle1 = new fabric.Circle({
+  radius: 50,
+  fill: 'red',
+  left: 0
+});
+var circle2 = new fabric.Circle({
+  radius: 50,
+  fill: 'green',
+  left: 100
+});
+var circle3 = new fabric.Circle({
+  radius: 50,
+  fill: 'blue',
+  left: 200
+});
+
+var group = new fabric.Group([ circle1, circle2, circle3 ], {
+  left: 200,
+  top: 100
+});
+
+canvas.add(group);
+```
+
+![](/article_assets/3_3.png)
+
+使用组时要记住的另一件事是对象的状态。例如，在与图像组成组时，需要确保这些图像已完全加载。由于Fabric已经提供了用于确保加载图像的辅助方法，因此这变得相当容易：
+
+```js
+// Ensure that the canvas is created first
+const canvas = new fabric.Canvas('myCanvas');
+
+// A function to load and scale an image
+async function loadImage(url, scaleFactor, left, top) {
+  const img = await fabric.FabricImage.fromURL(url);
+  img.scale(scaleFactor).set({ left, top });
+  return img;
+}
+
+// Main function to load images and create the group
+async function createImageGroup() {
+  // Load and scale images asynchronously
+  const img1 = await loadImage('/assets/pug.jpg', 0.1, 100, 100);
+  const img2 = await loadImage('/assets/pug.jpg', 0.1, 175, 175);
+  const img3 = await loadImage('/assets/pug.jpg', 0.1, 250, 250);
+
+  // Create a group of images
+  const group = new fabric.Group([img1, img2, img3], { left: 200, top: 200 });
+
+  // Add the group to the canvas
+  canvas.add(group);
+}
+
+// Call the function to create the image group
+createImageGroup();
+
+```
+
+![](/article_assets/3_4.png)
+
+那么在与groups一起工作时还有哪些其他方法可用？有`getObjects()`方法，其工作原理与之完全相同，`fabric.Canvas#getObjects()`并返回一组中所有对象的数组。有`size()`代表组中的所有对象的数量。还有`contains()`，它允许检查特定对象是否在group中。还有`item()`，我们前面看到的，允许在一个group中检索特定对象。还有`forEachObject()`，再次反映`fabric.Canvas#forEachObject`，只是相对于组对象。最后，有一种`add()`和`remove()`方法可以相应地从组中添加和删除对象。
+
+你可以通过两种方式从group中添加/删除对象-更新或不更新group dimensions/position。我们建议使用更新dimensions，除非你正在执行批处理操作，并且在处理过程中组的宽度/高度不存在问题时没有问题。
+
+<Steps>
+1. 要将矩形添加到组的中心，请执行以下操作：
+
+    ```js
+    group.add(new fabric.Rect({
+      ...
+      originX: 'center',
+      originY: 'center'
+    }));
+    ```
+
+2. 要在组中心之外添加100px的矩形，请执行以下操作：
+
+    ```js
+    group.add(new fabric.Rect({
+      ...
+      left: 100,
+      top: 100,
+      originX: 'center',
+      originY: 'center'
+    }));
+    ```
+
+3. 要将矩形添加到组的中心并更新组的尺寸，请执行以下操作：
+
+    ```js
+    group.addWithUpdate(new fabric.Rect({
+      ...
+      left: group.get('left'),
+      top: group.get('top'),
+      originX: 'center',
+      originY: 'center'
+    }));
+    ```
+
+4. 要在距组中心100px处添加矩形并更新组的尺寸，请执行以下操作：
+
+    ```js
+    group.addWithUpdate(new fabric.Rect({
+      ...
+      left: group.get('left') + 100,
+      top: group.get('top') + 100,
+      originX: 'center',
+      originY: 'center'
+    }));
+    ```
+
+5. 最后，如果你想使用画布上已经存在的对象创建一个组，则需要首先克隆它们：
+
+    ```js
+    // create a group with copies of existing (2) objects
+    var group = new fabric.Group([
+      canvas.item(0).clone(),
+      canvas.item(1).clone()
+    ]);
+
+    // remove all objects and re-render
+    canvas.clear().renderAll();
+
+    // add group onto canvas
+    canvas.add(group);
+    ```
+
+</Steps>
+
+### 序列化
+
+一旦开始构建某种有状态的应用程序（可能允许用户将画布内容的结果保存在服务器上，或将内容流式传输到其他客户端），你将需要**canvas序列化**。如果仍然要发送画布内容？也是可以的，有一个选项可以将画布导出到图像。但是上传图片到服务器无疑是相当占用带宽的，论大小，没有什么可以比得过文本了，这就是为什么Fabric为canvas画布序列化/反序列化提供了极好的支持。
+
+#### toObject, toJSON 方法
+
+Fabric中的canvas序列化方法主要是`toObject（）`和`toJSON（）`方法。我们来看一个简单的例子，首先序列化一个空的画布：
+
+```js
+var canvas = new fabric.Canvas('c');
+JSON.stringify(canvas); // '{"objects":[],"background":"rgba(0, 0, 0, 0)"}'
+```
+
+我们正在使用ES5 `JSON.stringify()`方法，该方法在传递的对象上隐式调用`toJSON`方法（如果存在）。由于Fabric中的canvas实例具有`toJSON`方法，就像我们调用`JSON.stringify(canvas.toJSON())`一样。 
+
+请注意，返回的字符串代表空canvas。它采用JSON格式，并且基本上由“objects”和“background”属性组成。 “objects”当前为空，因为画布上没有任何内容，并且背景具有默认的透明值（“ rgba（0，0，0，0）”）。 
+
+让我们为画布提供不同的背景，看看情况如何变化：
+
+```js
+canvas.backgroundColor = 'red';
+JSON.stringify(canvas); // '{ "objects": [], "background": "red" }'
+```
+
+正如你所料，画布表示现在反映了新的背景色。现在，让我们添加一些对象！
+
+```js
+canvas.add(new fabric.Rect({
+  left: 50,
+  top: 50,
+  height: 20,
+  width: 20,
+  fill: 'green'
+}));
+console.log(JSON.stringify(canvas));
+```
+..日志输出如下:
+```json
+{"objects":[{"type":"rect","left":50,"top":50,"width":20,"height":20,"fill":"green","overlayFill":null,"stroke":null,"strokeWidth":1,"strokeDashArray":null,"scaleX":1,"scaleY":1,"angle":0,"flipX":false,"flipY":false,"opacity":1,"selectable":true,"hasControls":true,"hasBorders":true,"hasRotatingPoint":false,"transparentCorners":true,"perPixelTargetFind":false,"rx":0,"ry":0}],"background":"rgba(0, 0, 0, 0)"}
+```
+😲哇哦！😲乍一看变化很大，但仔细看，我们发现新添加的对象，现在是“objects”数组的一部分，序列化为JSON。请注意，它的表示方式包含了它的所有视觉特征-左、上、宽、高、填充、笔划等等。
+如果我们要添加另一个对象（例如，矩形旁边的一个红色圆），你将看到表示方式相应地发生了变化：
+
+```js
+canvas.add(new fabric.Circle({
+  left: 100,
+  top: 100,
+  radius: 50,
+  fill: 'red'
+}));
+console.log(JSON.stringify(canvas));
+```
+..日志输出如下：
+
+```json
+{"objects":[{**"type":"rect"**,"left":50,"top":50,"width":20,"height":20,"fill":"green","overlayFill":null,"stroke":null,"strokeWidth":1,"strokeDashArray":null,"scaleX":1,"scaleY":1,"angle":0,"flipX":false,"flipY":false,"opacity":1,"selectable":true,"hasControls":true,"hasBorders":true,"hasRotatingPoint":false,"transparentCorners":true,"perPixelTargetFind":false,"rx":0,"ry":0},{**"type":"circle"**,"left":100,"top":100,"width":100,"height":100,"fill":"red","overlayFill":null,"stroke":null,"strokeWidth":1,"strokeDashArray":null,"scaleX":1,"scaleY":1,"angle":0,"flipX":false,"flipY":false,"opacity":1,"selectable":true,"hasControls":true,"hasBorders":true,"hasRotatingPoint":false,"transparentCorners":true,"perPixelTargetFind":false,"radius":50}],"background":"rgba(0, 0, 0, 0)"}
+```
+我突出显示了`“ type”：“ rect”`和`“ type”：“ circle”`部分，以便你可以更好地看到这些对象的位置。尽管一开始看起来可能有很多输出，但是与图像序列化相比，这没什么。
+
+为了进行比较，让我们看一下用`canvas.toDataURL('png')`获得的字符串的大约1/10(!)。
+
+```
+data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAyAAAAK8CAYAAAAXo9vkAAAgAElEQVR4Xu3dP4xtBbnG4WPAQOQ2YBCLK1qpoQE1/m+NVlCDwUACicRCEuysrOwkwcJgAglEItRQaWz9HxEaolSKtxCJ0FwMRIj32zqFcjm8e868s2fNWo/Jygl+e397rWetk5xf5pyZd13wPwIECBAgQIAAAQIECBxI4F0H+hwfQ4AAAQIECBAgQIAAgQsCxENAgAABAgQIECBAgMDBBATIwah9EAECBAgQIECAAAECAsQzQIAAAQIECBAgQIDAwQQEyMGofRABAgQIECBAgAABAgLEM0CAAAECBAgQIECAwMEEBMjBqH0QAQIECBAgQIAAAQICxDNAgAABAgQIECBAgMDBBATIwah9EAECBAgQIECAAAECAsQzQIAAAQIECBAgQIDAwQQEyMGofRABAgQIECBAgAABAgLEM0CAAAECBAgQIECAwMEEBMjBqH0QAQIECBAgQIAAAQICxDNAgAABAgQIECBAgMDBBATIwah9EAECBAgQIECAAAECAsQzQIAAAQIECBAgQIDAwQQEyMGofRABAgQIECBAgAABAgLEM0CAAAECBAgQIECAwMEEBMjBqH0QAQIECBAgQIAAAQICxDNAgAABAgQIECBAgMDBBATIwah9EAECBAgQIECAAAECAsQzQIAAAQIECBAgQIDAwQQEyMGofRABAgQIECBAgAABAgLEM0CAAAECBAgQIECAwMEEBMjBqH0QAQIECBAgQIAAAQICxDNAgAABAgQIECBAgMDBBATIwah9EAECBAgQIECAAAECAsQzQIAAAQIECBAgQIDAwQQEyMGofRABAgQIECBAgAABAgLEM0CAAAECBAgQIECAwMEEBMjBqH0QAQIECBAgQIAAAQICxDNAgAABAgQIECBAgMDBBATIwah9EAECBAgQIECAAAECAsQzQIAAAQIECBAgQIDAwQQEyMGofRABAgQIECBAgAABAgLEM0CAAAECBAgQIECAwMEEBMjBqH0QAQIECBAgQIAAAQICxDNAgAABAgQIECBAgMDBBATIwah9EAECBAgQIECAAAECyw+Qb134R/U2fevC8q+5esGWESBAgAABAgQIEFiOwPL/MC5AlvO0OBMCBAgQIECAAAECJxQQICcE9HYCBAgQIECAAAECBPYXECD7W3klAQIECBAgQIAAAQInFBAgJwT0dgIECBAgQIAAAQIE9hcQIPtbeSUBAgQIECBAgAABAicUECAnBPR2AgQIECBAgAABAgT2FxAg+1t5JQECBAgQIECAAAECJxQQICcE9HYCBAgQIECAAAECBPYXECD7W3klAQIECBAgQIAAAQInFBAgJwTc9+3z49yvmNd+dI7PzPHJOW6Y4wNzXD3HlXNc9pZdb85/vzbHK3P8aY7n5vj1HL+Y43dz417f97O9jgABAgQIECBAgMBSBATIKd2JCY5dWNwyx5fn+PwcV5U/6tXZ99M5fjjHk3Mjd6HifwQIECBAgAABAgQWLSBAirdnouP6WXfvHHfOcU1x9T6rXp4XPTLHA3NTX9jnDV5DgAABAgQIECBA4NACAuSE4hMdl8+Kr83xzTmuO+G61ttfnEXfnuN7c4PfaC21hwABAgQIECBAgMBJBQTIJQpOeFw7b71/jtsvccWh3vbYfNB9c6NfOtQH+hwCBAgQIECAAAECFxMQIMd8No7C4+F5283HfOtZv/ypOYG7hMhZ3wafT4AAAQIECBDYtoAA2fP+H/1Vqwd3f4jf8y1Lfdkunu7xV7OWenucFwECBAgQIEBg3QICZI/7O/Fxx7xs9wf3t36r3D3evciX7L7F7+6rIY8u8uycFAECBAgQIE
+
+...还有很多字符未显示...
+```
+
+你可能想知道为什么还会有`fabric.Canvas＃toObject`。
+很简单，`toObject`仅以实际对象的形式返回与`toJSON`相同的表示形式，而没有字符串序列化。例如，以较早的仅带有绿色矩形的画布为例，`canvas.toObject()`的输出是这样的：
+
+```json
+{ "background" : "rgba(0, 0, 0, 0)",
+  "objects" : [
+    {
+      "angle" : 0,
+      "fill" : "green",
+      "flipX" : false,
+      "flipY" : false,
+      "hasBorders" : true,
+      "hasControls" : true,
+      "hasRotatingPoint" : false,
+      "height" : 20,
+      "left" : 50,
+      "opacity" : 1,
+      "overlayFill" : null,
+      "perPixelTargetFind" : false,
+      "scaleX" : 1,
+      "scaleY" : 1,
+      "selectable" : true,
+      "stroke" : null,
+      "strokeDashArray" : null,
+      "strokeWidth" : 1,
+      "top" : 50,
+      "transparentCorners" : true,
+      "type" : "rect",
+      "width" : 20
+    }
+  ]
+}
+```
+如你所见，`toJSON`输出本质上是一个字符串化的`toObject`输出。现在，有趣的是（有用的！）事情是`toObject`的输出既聪明又懒。你在“objects”数组中看到的是迭代所有画布对象并将它们委托给它们自己的`toObject`方法的结果。` fabric.Path`有自己的`toObject` —返回路径的“points”数组，`fabric.Image`有自己的`toObject` —返回图像的“ src”属性。以一种真正的面向对象的方式，所有对象都可以序列化自己。 
+
+这意味着，当你创建自己的“class”或仅需要自定义对象的序列化表示形式时，你要做的就是使用`toObject`方法-完全替换它或对其进行扩展。让我们尝试一下:
+```js
+var rect = new fabric.Rect();
+rect.toObject = function() {
+  return { name: 'trololo' };
+};
+canvas.add(rect);
+console.log(JSON.stringify(canvas));
+```
+..日志如下:
+
+```json
+{"objects":[{"name":"trololo"}],"background":"rgba(0, 0, 0, 0)"}
+```
+如你所见，objects数组现在有了矩形的自定义表示。这种覆盖可能不是很有用（尽管提到了重点），我们还是用额外的属性来扩展矩形的toObject方法吧。
+
+```js
+var rect = new fabric.Rect();
+
+rect.toObject = (function(toObject) {
+  return function() {
+    return fabric.util.object.extend(toObject.call(this), {
+      name: this.name
+    });
+  };
+})(rect.toObject);
+
+canvas.add(rect);
+
+rect.name = 'trololo';
+
+console.log(JSON.stringify(canvas));
+```
+..日志输出如下:
+```json
+{"objects":[{"type":"rect","left":0,"top":0,"width":0,"height":0,"fill":"rgb(0,0,0)","overlayFill":null,"stroke":null,"strokeWidth":1,"strokeDashArray":null,"scaleX":1,"scaleY":1,"angle":0,"flipX":false,"flipY":false,"opacity":1,"selectable":true,"hasControls":true,"hasBorders":true,"hasRotatingPoint":false,"transparentCorners":true,"perPixelTargetFind":false,"rx":0,"ry":0,**"name":"trololo"**}],"background":"rgba(0, 0, 0, 0)"}
+```
+我们使用附加属性“name”扩展了对象现有的`toObject`方法，因此该属性现在是`toObject`输出的一部分，以canvas JSON表示形式出现。值得一提的是，如果你像这样扩展对象，则还需要确保对象的“class”（在这种情况下为`fabric.Rect`）在“ stateProperties”数组中具有此属性，以便从字符串形式中加载画布并将其解析并正确添加到对象。 
+
+你可以将对象标记为不可导出，将`excludeFromExport`设置为`true`。这样，你在画布上可以拥有的一些辅助对象将不会在序列化过程中保存。
+
+#### toSVG 方法
+
+另一种有效的基于文本的画布表示形式为SVG格式。由于Fabric专注于在画布上进行SVG解析和渲染，因此只有将其设为双向过程并提供画布到SVG的转换才有意义。让我们将相同的矩形添加到画布上，看看toSVG方法返回了哪种表示形式：
+
+```js
+canvas.add(new fabric.Rect({
+  left: 50,
+  top: 50,
+  height: 20,
+  width: 20,
+  fill: 'green'
+}));
+console.log(canvas.toSVG());
+```
+..日志输出如下:
+```xml
+<?xml version="1.0" standalone="no" ?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 20010904//EN" "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="800" height="700" xml:space="preserve"><desc>Created with Fabric.js 0.9.21</desc><rect x="-10" y="-10" rx="0" ry="0" width="20" height="20" style="stroke: none; stroke-width: 1; stroke-dasharray: ; fill: green; opacity: 1;" transform="translate(50 50)" /></svg>
+```
+就像`toJSON`和`toObject`一样，`toSVG`（在画布上调用时）将其逻辑委托给每个单独的对象，并且每个单独的对象都有其自己的`toSVG`方法，该方法专用于对象类型。如果你需要修改或扩展对象的SVG表示形式，则可以使用`toSVG`来完成与`toObject`相同的操作。 
+
+与Fabric专有的`toObject `/ `toJSON`相比，SVG表示的优点是你可以将其放入任何支持SVG的渲染器（浏览器，应用程序，打印机，照相机等）中，并且应该可以正常工作。但是，使用`toObject` /` toJSON`，你首先需要将其加载到画布上。
+
+说到将内容加载到画布上，现在我们可以将画布序列化为高效的文本块了，我们将如何重新加载到画布上呢？
+### 反序列化, SVG 解析器
+
+与序列化类似，有两种从字符串加载画布的方法：从JSON表示或从SVG加载。使用JSON表示形式时，有`fabric.Canvas＃loadFromJSON`和`fabric.Canvas＃loadFromDatalessJSON`方法。使用SVG时，有`fabric.loadSVGFromURL`和`fabric.loadSVGFromString`。 
+
+请注意，前两个方法是实例方法，可以直接在canvas实例上调用，而后两个方法是静态方法，可以在“ fabric”对象上而不是在画布上调用。 这些方法没什么可说的。它们的工作与你期望的完全一样。让我们以画布上的先前JSON输出为例，并将其加载到干净的画布上：
+
+```js
+var canvas = new fabric.Canvas();
+
+canvas.loadFromJSON('{"objects":[{"type":"rect","left":50,"top":50,"width":20,"height":20,"fill":"green","overlayFill":null,"stroke":null,"strokeWidth":1,"strokeDashArray":null,"scaleX":1,"scaleY":1,"angle":0,"flipX":false,"flipY":false,"opacity":1,"selectable":true,"hasControls":true,"hasBorders":true,"hasRotatingPoint":false,"transparentCorners":true,"perPixelTargetFind":false,"rx":0,"ry":0},{"type":"circle","left":100,"top":100,"width":100,"height":100,"fill":"red","overlayFill":null,"stroke":null,"strokeWidth":1,"strokeDashArray":null,"scaleX":1,"scaleY":1,"angle":0,"flipX":false,"flipY":false,"opacity":1,"selectable":true,"hasControls":true,"hasBorders":true,"hasRotatingPoint":false,"transparentCorners":true,"perPixelTargetFind":false,"radius":50}],"background":"rgba(0, 0, 0, 0)"}');
+```
+..两个物体“神奇地”出现在画布上:
+
+![](/article_assets/3_5.png)
+
+因此，从字符串加载画布非常容易。但是那种看起来很奇怪的`loadFromDatalessJSON`方法呢？与我们刚刚使用的`loadFromJSON`有什么不同？为了了解为什么需要此方法，我们需要查看具有或多或少复杂路径对象的序列化画布。像这个：
+
+![](/article_assets/3_6.png)
+
+..此形状的JSON.stringify（canvas）输出为：
+```json
+{"objects":[{"type":"path","left":184,"top":177,"width":175,"height":151,"fill":"#231F20","overlayFill":null,"stroke":null,"strokeWidth":1,"strokeDashArray":null,"scaleX":1,"scaleY":1,"angle":-19,"flipX":false,"flipY":false,"opacity":1,"selectable":true,"hasControls":true,"hasBorders":true,"hasRotatingPoint":false,"transparentCorners":true,"perPixelTargetFind":false,"path":[["M",39.502,61.823],["c",-1.235,-0.902,-3.038,-3.605,-3.038,-3.605],["s",0.702,0.4,3.907,1.203],["c",3.205,0.8,7.444,-0.668,10.114,-1.97],["c",2.671,-1.302,7.11,-1.436,9.448,-1.336],["c",2.336,0.101,4.707,0.602,4.373,2.036],["c",-0.334,1.437,-5.742,3.94,-5.742,3.94],["s",0.4,0.334,1.236,0.334],["c",0.833,0,6.075,-1.403,6.542,-4.173],["s",-1.802,-8.377,-3.272,-9.013],["c",-1.468,-0.633,-4.172,0,-4.172,0],["c",4.039,1.438,4.941,6.176,4.941,6.176],["c",-2.604,-1.504,-9.279,-1.234,-12.619,0.501],["c",-3.337,1.736,-8.379,2.67,-10.083,2.503],["c",-1.701,-0.167,-3.571,-1.036,-3.571,-1.036],["c",1.837,0.034,3.239,-2.669,3.239,-2.669],["s",-2.068,2.269,-5.542,0.434],["c",-3.47,-1.837,-1.704,-8.18,-1.704,-8.18],["s",-2.937,5.909,-1,9.816],["C",34.496,60.688,39.502,61.823,39.502,61.823],["z"],["M",77.002,40.772],["c",0,0,-1.78,-5.03,-2.804,-8.546],["l",-1.557,8.411],["l",1.646,1.602],["c",0,0,0,-0.622,-0.668,-1.691],["C",72.952,39.48,76.513,40.371,77.002,40.772],["z"],["M",102.989,86.943],["M",102.396,86.424],["c",0.25,0.22,0.447,0.391,0.594,0.519],["C",102.796,86.774,102.571,86.578,102.396,86.424],["z"],["M",169.407,119.374],["c",-0.09,-5.429,-3.917,-3.914,-3.917,-2.402],["c",0,0,-11.396,1.603,-13.086,-6.677],["c",0,0,3.56,-5.43,1.69,-12.461],["c",-0.575,-2.163,-1.691,-5.337,-3.637,-8.605],["c",11.104,2.121,21.701,-5.08,19.038,-15.519],["c",-3.34,-13.087,-19.63,-9.481,-24.437,-9.349],["c",-4.809,0.135,-13.486,-2.002,-8.011,-11.618],["c",5.473,-9.613,18.024,-5.874,18.024,-5.874],["c",-2.136,0.668,-4.674,4.807,-4.674,4.807],["c",9.748,-6.811,22.301,4.541,22.301,4.541],["c",-3.097,-13.678,-23.153,-14.636,-30.041,-12.635],["c",-4.286,-0.377,-5.241,-3.391,-3.073,-6.637],["c",2.314,-3.473,10.503,-13.976,10.503,-13.976],["s",-2.048,2.046,-6.231,4.005],["c",-4.184,1.96,-6.321,-2.227,-4.362,-6.854],["c",1.96,-4.627,8.191,-16.559,8.191,-16.559],["c",-1.96,3.207,-24.571,31.247,-21.723,26.707],["c",2.85,-4.541,5.253,-11.93,5.253,-11.93],["c",-2.849,6.943,-22.434,25.283,-30.713,34.274],["s",-5.786,19.583,-4.005,21.987],["c",0.43,0.58,0.601,0.972,0.62,1.232],["c",-4.868,-3.052,-3.884,-13.936,-0.264,-19.66],["c",3.829,-6.053,18.427,-20.207,18.427,-20.207],["v",-1.336],["c",0,0,0.444,-1.513,-0.089,-0.444],["c",-0.535,1.068,-3.65,1.245,-3.384,-0.889],["c",0.268,-2.137,-0.356,-8.549,-0.356,-8.549],["s",-1.157,5.789,-2.758,5.61],["c",-1.603,-0.179,-2.493,-2.672,-2.405,-5.432],["c",0.089,-2.758,-1.157,-9.702,-1.157,-9.702],["c",-0.8,11.75,-8.277,8.011,-8.277,3.74],["c",0,-4.274,-4.541,-12.82,-4.541,-12.82],["s",2.403,14.421,-1.336,14.421],["c",-3.737,0,-6.944,-5.074,-9.879,-9.882],["C",78.161,5.874,68.279,0,68.279,0],["c",13.428,16.088,17.656,32.111,18.397,44.512],["c",-1.793,0.422,-2.908,2.224,-2.908,2.224],["c",0.356,-2.847,-0.624,-7.745,-1.245,-9.882],["c",-0.624,-2.137,-1.159,-9.168,-1.159,-9.168],["c",0,2.67,-0.979,5.253,-2.048,9.079],["c",-1.068,3.828,-0.801,6.054,-0.801,6.054],["c",-1.068,-2.227,-4.271,-2.137,-4.271,-2.137],["c",1.336,1.783,0.177,2.493,0.177,2.493],["s",0,0,-1.424,-1.601],["c",-1.424,-1.603,-3.473,-0.981,-3.384,0.265],["c",0.089,1.247,0,1.959,-2.849,1.959],["c",-2.846,0,-5.874,-3.47,-9.078,-3.116],["c",-3.206,0.356,-5.521,2.137,-5.698,6.678],["c",-0.179,4.541,1.869,5.251,1.869,5.251],["c",-0.801,-0.443,-0.891,-1.067,-0.891,-3.473],...
+```
+..那只是整个输出的小部分！
+
+这里发生了什么？好吧，事实证明，这个`fabric.Path`实例-这种形状-实际上由数百条贝塞尔曲线组成，这些贝塞尔曲线决定了渲染的精确程度。 JSON表示形式中的所有这些[“ c”，0,2.67，-0.979,5.253，-2.048,9.079]块均对应于此类曲线中的每条曲线。而且当它们有数百个（甚至数千个）时，画布表示形式最终会变得非常庞大。 
+
+该怎么办？ 
+
+这是`fabric.Canvas＃toDatalessJSON`派上用场的时候。让我们尝试一下：
+
+```js
+canvas.item(0).sourcePath = '/assets/dragon.svg';
+console.log(JSON.stringify(canvas.toDatalessJSON()));
+```
+..日志输出如下:
+```json
+{"objects":[{"type":"path","left":143,"top":143,"width":175,"height":151,"fill":"#231F20","overlayFill":null,"stroke":null,"strokeWidth":1,"strokeDashArray":null,"scaleX":1,"scaleY":1,"angle":-19,"flipX":false,"flipY":false,"opacity":1,"selectable":true,"hasControls":true,"hasBorders":true,"hasRotatingPoint":false,"transparentCorners":true,"perPixelTargetFind":false,**"path":"/assets/dragon.svg"**}],"background":"rgba(0, 0, 0, 0)"}
+```
+好吧，那肯定很不错！所以发生了什么事？请注意，在调用`toDatalessJSON`之前，我们为path（龙形）对象提供值为“ /assets/dragon.svg”的“ sourcePath”属性。然后，当我们调用`toDatalessJSON`时，先前输出中的整个巨大路径字符串（数百条路径命令）被替换为单个“ dragon.svg”字符串。你可以看到上面突出显示的内容。 
+
+在处理许多复杂形状时，`toDatalessJSON`允许我们进一步减少画布表示，并使用指向SVG的简单链接替换巨大的路径数据表示。 
+
+现在回到`loadFromDatalessJSON`方法...你可能会猜到，它只是允许从无数据版本的画布表示中加载画布。 `loadFromDatalessJSON`非常了解如何获取那些“path”字符串（例如“ /assets/dragon.svg”），加载它们并将它们用作相应路径对象的数据。
+
+现在，让我们看一下SVG加载方法。我们可以使用字符串或URL：
+```js
+fabric.loadSVGFromString('...', function(objects, options) {
+  var obj = fabric.util.groupSVGElements(objects, options);
+  canvas.add(obj).renderAll();
+});
+```
+第一个参数是SVG字符串，第二个参数是回调函数。当解析和加载SVG并接收2个参数（objects和options）时，将调用该回调。 objects包含从SVG解析的对象数组-paths,path groups（用于复杂对象）,images,text等。为了将所有这些对象分组为一个内聚的集合，并使其与SVG文档中的外观相同，我们使用`fabric.util.groupSVGElements`传递对象和选项。作为回报，我们获得`fabric.Path`或`fabric.Group`的实例，然后可以将其添加到画布上。 
+
+`fabric.loadSVGFromURL`的工作方式相同，只不过你传递的是包含URL而不是SVG内容的字符串。请注意，Fabric将尝试通过`XMLHttpRequest`获取该URL，因此SVG需要符合通常的SOP规则。
+### 子类化
+
+由于Fabric是按照真正的面向对象的方式构建的，因此可以使子类化和扩展变得简单自然。从本系列的第1部分中可以知道，Fabric中存在对象的现有层次结构。所有2D对象（paths,images,text等）都从fabric.Object继承，并且某些“类”（例如`fabric.IText`）甚至形成3级继承。 那么，我们将如何在Fabric中对现有的“类”之一进行子类化呢？也许甚至创建我们自己的？ 对于此任务，我们需要`fabric.util.createClass`实用程序方法。` createClass`只是对Javascript原型继承的简单抽象。
+
+让我们首先创建一个简单的Point “ 类”：
+
+```js
+var Point = fabric.util.createClass({
+  initialize: function(x, y) {
+    this.x = x || 0;
+    this.y = y || 0;
+  },
+  toString: function() {
+    return this.x + '/' + this.y;
+  }
+});
+```
+`createClass` 接受一个对象，并使用该对象的属性创建具有实例级属性的“类”。唯一经过特殊处理的属性是“初始化”，它用作构造函数。因此，现在初始化Point时，我们将创建一个具有“ x”和“ y”属性以及“ toString”方法的实例：
+```js
+var point = new Point(10, 20);
+
+point.x; // 10
+point.y; // 20
+
+point.toString(); // "10/20"
+```
+如果我们要创建“ Point”类的子级（比如说一个彩色的点），则可以使用createClass，如下所示：
+
+```js
+var ColoredPoint = fabric.util.createClass(Point, {
+  initialize: function(x, y, color) {
+    this.callSuper('initialize', x, y);
+    this.color = color || '#000';
+  },
+  toString: function() {
+    return this.callSuper('toString') + ' (color: ' + this.color + ')';
+  }
+});
+```
+请注意，现在如何将具有实例级属性的对象作为第二个参数传递。第一个参数接收Point“类”，该点告诉`createClass`将该点用作该类的父“类”。为了避免重复，我们使用`callSuper`方法，该方法调用父“类”的方法。这意味着，如果我们要更改`Point`，则更改也将传播到`ColoredPoint`。要查看`ColoredPoint`的实际效果：
+
+```js
+var redPoint = new ColoredPoint(15, 33, '#f55');
+
+redPoint.x; // 15
+redPoint.y; // 33
+redPoint.color; // "#f55"
+
+redPoint.toString(); "15/33 (color: #f55)"
+```
+现在我们开始创建自己的“类”和“子类”，让我们看看如何与已经存在的Fabric一起使用。例如，让我们创建一个`LabeledRect`“类”，该类实际上是一个具有某种与之关联的标签的矩形。当在画布上渲染时，该标签将被表示为矩形内的文本。与上一个带有圆圈和文字的小组示例相似。在使用Fabric时，你会注意到可以通过使用组或使用自定义类来实现这样的组合抽象。
+
+```js
+var LabeledRect = fabric.util.createClass(fabric.Rect, {
+
+  type: 'labeledRect',
+  // initialize can be of type function(options) or function(property, options), like for text.
+  // no other signatures allowed.
+  initialize: function(options) {
+    options || (options = { });
+
+    this.callSuper('initialize', options);
+    this.set('label', options.label || '');
+  },
+
+  toObject: function() {
+    return fabric.util.object.extend(this.callSuper('toObject'), {
+      label: this.get('label')
+    });
+  },
+
+  _render: function(ctx) {
+    this.callSuper('\_render', ctx);
+
+    ctx.font = '20px Helvetica';
+    ctx.fillStyle = '#333';
+    ctx.fillText(this.label, -this.width/2, -this.height/2 + 20);
+  }
+});
+```
+似乎这里发生了很多事情，但是实际上很简单。 
+
+首先，我们将父“类”指定为`fabric.Rect`，以利用其渲染功能。接下来，我们定义“ type”属性，将其设置为“ labeledRect”。这只是为了保持一致性，因为所有Fabric对象都具有type属性（矩形，圆形，路径，文本等）。然后，已经熟悉了构造函数（`initialize`），在该构造函数中，我们再次使用`callSuper`。此外，我们将对象的标签设置为通过选项传递的任何值。最后，剩下2种方法-`toObject`和`_render`。如你从序列化一章已经知道的，`toObject`负责实例的对象（和JSON）表示。由于`LabeledRect`具有与常规rect相同的属性，但也具有标签，因此我们扩展了父对象的`toObject`方法，并简单地向其中添加了标签。最后但并非最不重要的一点是，`_render`方法是负责实际绘制实例的原因。其中还有另一个`callSuper`调用，它是呈现矩形的内容，另外还有3行文本呈现逻辑。
+
+现在，如果我们要渲染这样的对象：
+
+```js
+var labeledRect = new LabeledRect({
+  width: 100,
+  height: 50,
+  left: 100,
+  top: 100,
+  label: 'test',
+  fill: '#faa'
+});
+canvas.add(labeledRect);
+```
+..我们会得到这个：
+
+
+![](/article_assets/3_7.png)
+
+更改标签值或任何其他常规矩形属性显然可以按预期工作：
+```js
+labeledRect.set({
+  label: 'trololo',
+  fill: '#aaf',
+  rx: 10,
+  ry: 10
+});
+```
+![](/article_assets/3_8.png)
+
+当然，在这一点上，你可以随意更改此“类”的行为。例如，将某些值设为默认值，以避免每次将它们传递给构造函数。或使某些可配置属性在实例上可用。如果确实使其他属性可配置，则可能要在`toObject`中说明它们并进行`initialize`：
+
+```js
+...
+initialize: function(options) {
+  options || (options = { });
+
+  this.callSuper('initialize', options);
+
+  // give all labeled rectangles fixed width/heigh of 100/50
+  **this.set({ width: 100, height: 50 });**
+
+  this.set('label', options.label || '');
+}
+...
+_render: function(ctx) {
+
+  // make font and fill values of labels configurable
+  **ctx.font = this.labelFont;
+  ctx.fillStyle = this.labelFill;**
+
+  ctx.fillText(this.label, -this.width/2, -this.height/2 + 20);
+}
+...
+```
+为了克隆和保存/还原此类，你需要添加一个fromObject静态方法，并在其之上添加要添加到主fabricObject的子类：
+
+```js
+// standard options type:
+fabric.labeledRect.fromObject = function(object, callback) {
+  return fabric.FabricObject.\_fromObject('LabeledRect', object, callback);
+}
+...
+// argument + options type:
+// in this example aProp is the property in the object that contains the value
+// that goes in someValue in \`new fabric.MyClass(someValue, options)\`
+fabric.labeledRect.fromObject = function(object, callback) {
+  return fabric.FabricObject.\_fromObject('LabeledRect', object, callback, 'aProp');
+}
+```
+关于这一点，我总结了本系列的第3部分，其中我们探讨了Fabric的一些更高级的方面。在组，类和（反）序列化的帮助下，你可以将你的应用提升到一个全新的水平。

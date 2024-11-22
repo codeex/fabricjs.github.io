@@ -1,33 +1,32 @@
 ---
 date: '2020-05-03'
-description: Intrdouction to the new control api in fabric 4
-title: Custom controls api
+description: 介绍 自定义控制API
+title: 自定义控制API
 ---
 
-This api is for fabricJS 4.0, the api and the text is currently in beta. Some little change could happen before release, in order to keep naming and options as simple as possible.
+这个api是针对FabricJS4.0的，api和文本目前处于测试阶段。为了使命名和选项尽可能简单，在发布之前可能会发生一些小的变化。
 
-## Introduction
+## 介绍
 
-This api lets the developer create its own custom controls without having to use overrides on standard fabricJS controls method. This makes customizaion supported, easy and makes update to the latest version always possible.
+此api允许开发人员创建自己的自定义控件，而不必对标准fabricJS控件方法使用重写。这使得自定义支持，容易，并使更新到最新版本总是可能的。
 
-FabricJS uses the api internally to define the standard controls set with the same feature and customization that was possible in version 3 and below.
+FabricJS在内部使用api来定义标准控件集，这些控件集具有与版本3及更低版本中相同的功能和定制。
 
-### How does it work.
+### 怎么工作的
 
-Now fabric.Object prototype has a control set, and a control set is simply a plain js object that has a set of keys, for each key the value is a `fabric.Control` class. For simplicity in the standard control set the keys are keeping the old names `tl`, `mt`, `tr`, `mr`, `br`, `mb`, `bl`, `ml` and `mtr`.
+现在fabric.Object prototype有一个控制集，控制集只是一个普通的js对象，它有一组键，每个键的值都是一个fabric.Control class。为简化标准控件集，键保留了旧名称tl、mt、tr、mr、br、mb、bl、ml和mtr。
 
-The difference is that the code that draws the controls does not know anything anymore about the  controls, but will loop over the keys of this controlset and draw each control.
+不同的是，绘制控件的代码不再知道任何关于控件的信息，而是将循环到此控件集的键并绘制每个控件。
 
-By default all fabricJS objects share the same controls set, exception made for the textbox that has different controls that make possible changing the width rather than scaling.
+默认情况下，所有fabricJS对象共享相同的控件集，但textbox有不同的控件，可以更改宽度而不是缩放。
 
-Nothing stops you from creating a different controls set for each subClass, or having the same control set everywhere and make controls visible/hidden depending on the object that is currently rendering.
+没有什么可以阻止您为每个子类创建不同的控件集，或者在每个地方都有相同的控件集，并根据当前渲染的对象使控件可见/隐藏。
 
-### Structure of a control
+### 一个控件的结构
 
-A control is a collection of a positioning function, rendering function, style function, visibility function, an actionHandler and a bunch of other properties, called and used in the right order from fabricJS.
-Some of properties are optional and depends on the implementation of the control.
+control是定位函数、渲染函数、样式函数、可见性函数、actionHandler和一组其他属性的集合，这些属性从fabricJS以正确的顺序调用和使用。有些属性是可选的，取决于控件的实现。
 
-Let's see how fabricJS controls are defined in the library itself, let's take for example the control `mr` of the standard object:
+让我们看看fabricJS控件是如何在库本身中定义的，以标准对象的控件`mr`为例：
 
 ```js
 objectControls.mr = new fabric.Control({
@@ -39,61 +38,55 @@ objectControls.mr = new fabric.Control({
 });
 ```
 
-The control is completely configurable, either providing handlers or providing values for the default handlers.
+该控件是完全可配置的，可以提供处理程序，也可以提供默认处理程序的值。
 
-Default controls are defined here: [standard controls definition](https://github.com/fabricjs/fabric.js/blob/master/src/mixins/default_controls.js).
+默认控件在此处定义：[标准控件定义](https://github.com/fabricjs/fabric.js/blob/master/src/mixins/default_controls.js)。
 
-#### visible and getVisibility
+#### 可视化和获取可视化状态
 
-Before FabricJS 4.0 controls could be set as non visible, to be ignored.
-Now controls can either exist, non exist, but also be temporary invsisible depending on object status.
+在FabricJS 4.0之前，控件可以设置为不可见，可以忽略。现在控件可以存在，也可以不存在，但也可以是临时不可变的，具体取决于对象状态。
 
-The default `getVisibility` function of the control will either return the standard object `_controlsVisibility` property that has been mantained for compatibility reason, or in case that is not set will return the control `.visible` value.
+控件的默认`getVisibility`函数将返回标准的`object_controlsVisibility`属性，该属性由于兼容性的原因而被忽略，如果未设置，则返控件`.visible`值。
 
-Controls are generally shared among instances, so setting a control to `.visible = false` will hide it for all the objects, while using the object methods for controls visibility will hide on a per object basis.
+控件通常在实例之间共享，因此将控件设置为`.visible=false`将对所有对象隐藏它，而将对象方法用于控件可见性将对每个对象隐藏。
 
-#### actioname and getActionName
+#### 动作和获取动作名称
 
-The property actionName gives the name of the action that the controll will likely execute.
-This is used to fire the event during the action, and also FabricJS uses to identify what the user is doing for some extra optimizations. If you are writing a custom control and you want to know somewhere else in the code what is going on, you can use this string here and listen to the resulting event.
+属性`actionName`给出了控件可能执行的操作的名称。这用于在操作期间触发事件，FabricJS也用于标识用户在进行一些额外的优化时正在做的事情。如果您正在编写自定义控件，并且想知道代码中其他地方的情况，则可以在此处使用此字符串并监听结果事件。
 
-The old naming convention of events is still respected. So a scale action will still fire the event `scaling` and `object:scaling`. But will also fire an extra event `scale` or `scaleX` because that is the action name. So when creating your custom action handler ( if needed ) you can choose if explicitly fire an event with the name you want in your action handler or let fabric fire an event with the same name of the action name.
+事件的旧命名约定仍然受到尊重。因此，缩放操作仍将触发事件缩放和`object：scaling`。但也会触发额外的事件`scale`或`scaleX`，因为这是动作名称。因此，在创建自定义动作处理程序时（如果需要），您可以选择是否在动作处理程序中以您想要的名称显式触发事件，还是让Fabric触发与动作名称相同的事件。
 
-Be careful of not namig actions with default fabricJS event you are using.
+请注意，不要对正在使用的默认fabricJS事件进行namig操作。
 
-You can also provide a custom getActionName if your control run multiple actions depending on some external state.
+如果控件根据某些外部状态运行多个操作，还可以提供自定义`getActionName`。
 
-For example the old `mr` control can be used for 2 actions, `scale` or `skew` and the outcome is dependent from the modifier keys.
+例如，旧的mr控件可以用于2个动作，缩放或倾斜，结果取决于修改器键。
 
-#### angle
+#### 角度
 
-Angle is not used from the standard fabricJS functions, is here as an option in case you need a control that has a direction, and you want to reuse your drawing function for different orientations, write it so that it can look up the control angle.
+标准fabricJS函数中未使用角度，如果需要具有方向的控件，并且在此处希望将其复用为不同的方向来使用它，请在此处将其编写为一个选项，以使其可以查找控件的角度。
 
-Don't use it for something different, in future version we may decide to use it to rotate controls.
+请勿将其用于其他用途，在将来的版本中，我们可能会决定使用它来旋转控件。
 
-#### x and y
+#### x 和 y
 
-X and y represent the position that is used by the default positionHandler. The default position handler is good enough for most of the controls placed on the object bounding box. The value of `x` and `y` represent the size of the bounding box, including padding.
+x和y代表默认positionHandler使用的位置。对于放置在对象边界框上的大多数控件而言，默认位置处理程序已经足够好。 x和y的值表示边界框的大小，包括填充。
 
-Those values range from -0.5 to 0.5 for the full bounding box, but can extend further if you need to postion them far away. `{x: 0.5, y: 0}` will align the control in the vertical center, on the right side of the bounding box.
+对于整个边界框，这些值的范围从-0.5到0.5，但是如果您需要将它们放置在很远的地方，则可以进一步扩展。 `{x：0.5，y：0}`将使控件在边界框右侧的垂直中心对齐。
 
-#### offsetX and offsetY
+#### offsetX 和 offsetY
 
-offsetX and offsetY let you offset the control position in screen pixels.
-A typical example is the standard rotation control, that is offseted from the bounding box by about 30px.
-Offsets are in place of the `rotatingPointOffset` of fabric 3.x and can now be applied to all controls. `rotatingPointOffset` is gone.
+offsetX和offsetY可让您以屏幕像素为单位偏移控件位置。一个典型的示例是标准旋转控件，该控件从边界框偏移了大约30px。Offsets代替fabric3.x的`rotationPointOffset`，现在可以将其应用于所有控件。 `rotationPointOffset`消失了。
 
 #### withConnection
 
-A boolean that indicates if the control, in case of offsets, is connected to the bounding box with a line to position point. Is just a graphic option and has no functionality.
+布尔值，指示控件（如果是偏移）是否与具有线到位置点的边界框连接。只是一个图形选项，没有功能。
 
-#### cursorStyle and cursorStyleHandler
+#### cursorStyle 和 cursorStyleHandler
 
-cursorStyleHandler is a function that is responsible for the cursor displayed when the mouse is hovering over the control.
+`cursorStyleHandler`是一个函数，负责将鼠标悬停在控件上时显示的光标。 
 
-This particular function needs to show either a not-allowed cursor, or an aligned one for skew or scale.
-The function needs to return a valid cursor for the browser you can use.
-Inline url encoded SVG are a possibility too.
+此特定功能需要显示一个不允许的光标，或者显示一个对齐的用于偏斜或缩放的光标。该函数需要为您可以使用的浏览器返回一个有效的游标。内联url编码的SVG也是可能的。
 
 ```js
 function scaleSkewStyleHandler(eventData, corner, fabricObject) {
@@ -104,22 +97,17 @@ function scaleSkewStyleHandler(eventData, corner, fabricObject) {
 }
 ```
 
-The function gets the mouse event data, so it can determine whether some hotkey is pressed, then run some specfic logics for one action or the other.
-`skewCursorStyleHandler` or `scaleCursorStyleHandler` will then take care of the specific logic for one action or the other.
-All the style handling for the existing fabricJS functionalities are written and do serve as an example in case you need to write a different cursor logic.
+该函数获取鼠标事件数据，因此可以确定是否按下了某个热键，然后针对某个动作或其他动作运行特定逻辑。然后，`skewCursorStyleHandler`或`scaleCursorStyleHandler`将处理一个动作或另一个动作的特定逻辑。现有的fabricJS功能的所有样式处理均已编写，并作为示例，以防您需要编写其他游标逻辑。
 
-If your custom control always shows the same cursor, you can just keep the default handler and change that control by setting the property `cursorStyle`.
+如果您的自定义控件始终显示相同的光标，则可以保留默认处理程序，并通过设置`cursorStyle`属性来更改该控件。
 
-#### mouseUpHandler and mouseDownHandler
+#### mouseUpHandler 和 mouseDownHandler
 
-You can use controls as once time click buttons if you want, instead of connecting them to drag action with the mouse.
-A classic example is the control to delete an object or to clone it, as described better in this example here: [custom control render and action](/custom-control-render).
-Or another possible one is flipping an object.
+如果需要，您可以将控件用作一次单击按钮，而不是将其连接以使用鼠标拖动动作。一个经典的示例是删除对象或克隆对象的控件，如本例中更好地描述的那样：[自定义控件渲染和操作](/demos/custom-controls)。或另一种可能是翻转对象
 
 #### actionHandler
 
-This function, definitely the most complicated to master, allow you write your custom actions.
-We can look at the simple width changer function:
+该功能绝对是掌握起来最复杂的功能，它使您可以编写自定义操作。我们可以看一下简单的宽度转换器功能：
 
 ```js
 function changeWidth(eventData, transform, x, y) {
@@ -130,18 +118,16 @@ function changeWidth(eventData, transform, x, y) {
   return true;
 }
 ```
-arguments:
-`eventData` is the mouse event object
-`transform` is a plain js object that contains `transform.target` the object we are transforming
-`x` and `y` represent the distance in pixel from the anchor point of the transformation.
+参数:
 
-This function handles the side controls of the textbox, but can be also used on rects as it is, and creating another one to change the height is a simple as swapping the width related properties with they height related ones.
+- `eventData` 是鼠标事件对
+- `transform` 是一个普通的js对象，其中包含 `transform.target`，我们要转换的对象x和y表示距转换锚点的像素距离。
+- `x` 和 `y` 我们要转换的对象x和y表示距转换锚点的像素距离。
 
-Another easy extension is to make it change the rx,ry of an ellipse or the radius of a circle.
+此函数处理文本框的侧面控件，但也可以按原样使用在`rects`上，创建另一个用于更改高度的控件很简单，只需将与宽度相关的属性交换为与高度相关的属性即可。
 
-Moving into scaling and skewing the calculations are way more complex.
-Please note that while the api provide full freedom, writing actions for controls is not easy.
-When geometry comes into play knowing fabricJS internals is very important.
-The actual actions serve as an example but the code is way more complicated of how it could be since it has to support: `scalingFlip`, `lockScaling`, `centerTransfrom`, `freeformScaling` and other fabricJS properties.
+另一个简单的扩展是使其更改椭圆的rx，ry或圆的半径。
 
-If you think a portion of the code is reusable for your own action ( like it is `wrapWithFixedAnchor`) open an issue asking it to be separate and put it in its own function.
+进行缩放和倾斜计算会更加复杂。请注意，尽管api提供了完全的自由度，但为控件编写动作并不容易。当几何学发挥作用时，了解fabricJS内部结构非常重要。实际操作只是一个示例，但是由于必须支持，因此代码的方式变得更加复杂：`scalingFlip`，`lockScaling`，`centerTransfrom`，`freeformScaling`和其他fabricJS属性。
+
+如果您认为部分代码可用于您自己的操作（例如`wrapWithFixedAnchor`），请打开一个issue，要求将其分开并将其放在自己的函数中。

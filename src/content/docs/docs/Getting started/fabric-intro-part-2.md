@@ -1,7 +1,9 @@
 ---
 date: '2024-11-20'
 description: '理解什么是FabricJS，更好地在你的项目中使用FabricJS'
-title: Fabric.js简介：第2部分
+title: 简介：2.动画、颜色、文本、事件
+sidebar:
+  order: 4
 ---
 
 在本系列的[第一部分中](/docs/getting-started/fabric-intro-part-1/)，我们只是开始熟悉Fabric.js。我们研究了使用Fabric的原因，对象模型和对象层次结构，Fabric中可用的不同种类的实体-简单的形状，图像和复杂的路径。我们还学习了如何对画布上的Fabric对象执行简单的操作。 
@@ -51,7 +53,7 @@ rect.animate('angle', '-=5', { onChange: canvas.renderAll.bind(canvas) });
 
 每次更改后动画没有自动重新渲染画布的原因是由于性能。毕竟，我们可以在画布上有成百上千个动画对象，如果每个对象都试图重新渲染屏幕并不是很好。对于许多对象，你可以使用诸如`requestAnimationFrame`（或其他基于计时器的）循环之类的东西连续不断地渲染画布，而无需为每个对象调用`renderAll`。但是大多数时候，你可能需要显式指定`canvas.renderAll`作为“ onChange”回调。
 
-那么我们可以传递哪些其他选项进行动画处理呢？
+那么我们可以传递哪些其他选项进行动画处理呢？更多信息可以关注[webmote](https://blog.csdn.net/codeex)。
 
 
 - from：允许指定可设置动画的属性的起始值（如果我们不希望使用当前值）。 
@@ -313,7 +315,7 @@ circle.set('fill', gradient);
 
 你可以指定类型为`linear`或`radial`以获得两种不同类型的渐变，而且`gradientUnits`默认为像素，但可以指定为“百分比”。 “百分比”将允许以对象大小的百分比指定渐变大小，“ 1”是对象大小的100％。
 
-此设置对`fabric.Text`对象有用，该对象根据文本内容更改宽度或高度。
+此设置对`fabric.FabricText`对象有用，该对象根据文本内容更改宽度或高度。
 
 这是一个从左到右的红蓝色渐变的示例：
 
@@ -383,14 +385,14 @@ hello word的例子怎么样？
 
 ```js
 // 创建文本对象
-const text = new FabricText('hello world', { left: 100, top: 100 });
+const text = new fabric.FabricText('hello world', { left: 100, top: 100 });
 
 // 将文本添加到画布
 canvas.add(text);
 
 ```
 
-这是正确的！在画布上显示文本就像在所需位置添加`fabric.Text`实例一样简单。如你所见，唯一需要的第一个参数是实际的文本字符串。第二个参数是通常的选项对象，可以具有任何通常的left，top，fill，opacity等属性。
+这是正确的！在画布上显示文本就像在所需位置添加`fabric.FabricText`实例一样简单。如你所见，唯一需要的第一个参数是实际的文本字符串。第二个参数是通常的选项对象，可以具有任何通常的left，top，fill，opacity等属性。
 
 但是，当然，文本对象也具有其自己的，独特的，与文本相关的属性。让我们看看其中的一些：
 
@@ -400,7 +402,7 @@ canvas.add(text);
 
 ```js
 // 创建 Comic Sans 字体的文本对象
-const comicSansText = new FabricText("I'm in Comic Sans", {
+const comicSansText = new fabric.FabricText("I'm in Comic Sans", {
   fontFamily: 'Comic Sans'
 });
 
@@ -414,12 +416,12 @@ const comicSansText = new FabricText("I'm in Comic Sans", {
 
 ```js
 // 创建字体大小为 40 的文本对象
-const text40 = new FabricText("I'm at fontSize 40", {
+const text40 = new fabric.FabricText("I'm at fontSize 40", {
   fontSize: 40
 });
 
 // 创建字体大小为 20 的文本对象
-const text20 = new FabricText("I'm at fontSize 20", {
+const text20 = new fabric.FabricText("I'm at fontSize 20", {
   fontSize: 20
 });
 
@@ -433,12 +435,12 @@ const text20 = new FabricText("I'm at fontSize 20", {
 
 ```js
 // 创建常规字体的文本对象
-const normalText = new FabricText("I'm a normal text", {
+const normalText = new fabric.FabricText("I'm a normal text", {
   fontWeight: 'normal'
 });
 
 // 创建加粗字体的文本对象
-const boldText = new FabricText("I'm at bold text", {
+const boldText = new fabric.FabricText("I'm at bold text", {
   fontWeight: 'bold'
 });
 
@@ -452,17 +454,17 @@ const boldText = new FabricText("I'm at bold text", {
 
 ```js
 // 创建一个带下划线的文本
-const underlineText = new FabricText("I'm an underlined text", {
+const underlineText = new fabric.FabricText("I'm an underlined text", {
   underline: true
 });
 
 // 创建一个带删除线的文本
-const strokeThroughText = new FabricText("I'm a stroke-through text", {
+const strokeThroughText = new fabric.FabricText("I'm a stroke-through text", {
   linethrough: true
 });
 
 // 创建一个带上划线的文本
-const overlineText = new FabricText("I'm an overline text", {
+const overlineText = new fabric.FabricText("I'm an overline text", {
   overline: true
 });
 ```
@@ -478,17 +480,17 @@ const overlineText = new FabricText("I'm an overline text", {
 
 ```js
 // 创建带阴影的文本 1
-const shadowText1 = new FabricText("I'm a text with shadow", {
+const shadowText1 = new fabric.FabricText("I'm a text with shadow", {
   shadow: 'rgba(0,0,0,0.3) 5px 5px 5px'
 });
 
 // 创建带阴影的文本 2
-const shadowText2 = new FabricText("And another shadow", {
+const shadowText2 = new fabric.FabricText("And another shadow", {
   shadow: 'rgba(0,0,0,0.2) 0 0 5px'
 });
 
 // 创建带阴影的文本 3
-const shadowText3 = new FabricText("Lorem ipsum dolor sit", {
+const shadowText3 = new fabric.FabricText("Lorem ipsum dolor sit", {
   shadow: 'green -5px -5px 3px'
 });
 
@@ -501,11 +503,11 @@ const shadowText3 = new FabricText("Lorem ipsum dolor sit", {
 字体样式可以是2个值之一：`normal`或`italic`。这类似于同名的CSS属性。.
 
 ```js
-var italicText = new fabric.Text("A very fancy italic text", {
+var italicText = new fabric.FabricText("A very fancy italic text", {
   fontStyle: 'italic',
   fontFamily: 'Delicious'
 });
-var anotherItalicText = new fabric.Text("another italic text", {
+var anotherItalicText = new fabric.FabricText("another italic text", {
   fontStyle: 'italic',
   fontFamily: 'Hoefler Text'
 });
@@ -519,13 +521,13 @@ var anotherItalicText = new fabric.Text("another italic text", {
 
 ```js
 // 创建一个带描边的文本
-const textWithStroke = new FabricText("Text with a stroke", {
+const textWithStroke = new fabric.FabricText("Text with a stroke", {
   stroke: '#ff1318',
   strokeWidth: 1
 });
 
 // 创建另一个带描边的文本，字体为 'Impact'
-const loremIpsumDolor = new FabricText("Lorem ipsum dolor", {
+const loremIpsumDolor = new fabric.FabricText("Lorem ipsum dolor", {
   fontFamily: 'Impact',
   stroke: '#c3bfbf',
   strokeWidth: 3
@@ -546,7 +548,7 @@ const loremIpsumDolor = new FabricText("Lorem ipsum dolor", {
 const text = 'this is\nmulti-line\ntext\naligned right!';
 
 // 创建一个右对齐的文本对象
-const alignedRightText = new FabricText(text, {
+const alignedRightText = new fabric.FabricText(text, {
   textAlign: 'right'
 });
 
@@ -560,12 +562,12 @@ CSS领域可能熟悉的另一个属性是lineHeight。它允许我们更改多�
 
 ```js
 // 创建一个行高为 3 的文本对象
-const lineHeight3 = new FabricText('Lorem ipsum ...', {
+const lineHeight3 = new fabric.FabricText('Lorem ipsum ...', {
   lineHeight: 3
 });
 
 // 创建一个行高为 1 的文本对象
-const lineHeight1 = new FabricText('Lorem ipsum ...', {
+const lineHeight1 = new fabric.FabricText('Lorem ipsum ...', {
   lineHeight: 1
 });
 
@@ -581,7 +583,7 @@ const lineHeight1 = new FabricText('Lorem ipsum ...', {
 const text = 'this is\nmultiline\ntext\nwith\ncustom lineheight\n&background';
 
 // 创建一个带背景色的文本对象
-const textWithBackground = new FabricText(text, {
+const textWithBackground = new fabric.FabricText(text, {
   textBackgroundColor: 'rgb(0,200,0)'
 });
 

@@ -7,9 +7,10 @@ import CarbonAd from '../components/CarbonAd/InlineCarbonAd';
 import Footer from '../components/Footer/Footer.astro';
 interface Props {
 	title: string;
+	description: string;
 }
 
-const { title } = Astro.props;
+const { title, description } = Astro.props;
 ---
 
 <!doctype html>
@@ -19,14 +20,22 @@ const { title } = Astro.props;
 		<meta name="description" content="Astro description" />
 		<meta name="viewport" content="width=device-width" />
 		<link rel="icon" type="image/svg+xml" href="/favicon.ico" />
-		<link rel="sitemap" href="/sitemap-index.xml" />
+		<link
+			rel="sitemap"
+			type="application/xml"
+			title="Sitemap"
+			href="/sitemap-index.xml"
+		/>
 		<meta name="author" content="webmote,webmote@gmail.com" />
 		<meta name="copyright" content="版权所有2024-2030 webmote,codeex" />
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<meta name="baidu-site-verification" content="codeva-UUTruDFhDr" />
 		<meta
 			name="keywords"
 			content="fabric,fabricjs,fabricjs中文网站,fabricjs中文文档,fabricjs.com,canvas,javascript,vue,react,绘图,画板,类库,游戏,流程图,flowchart,动画,画布,教程,学习"
 		/>
 		<meta name="generator" content={Astro.generator} />
+		{description && <meta name="description" content={description} />}
 		<title>{title}</title>
 		<script>
 			type Theme = 'auto' | 'dark' | 'light';
@@ -34,9 +43,7 @@ const { title } = Astro.props;
 			const storageKey = 'starlight-theme';
 			/** Get a typesafe theme string from any JS value (unknown values are coerced to `'auto'`). */
 			const parseTheme = (theme: unknown): Theme =>
-				theme === 'auto' || theme === 'dark' || theme === 'light'
-					? theme
-					: 'auto';
+				theme === 'dark' || theme === 'light' ? theme : 'light';
 
 			/** Load the user’s preference from `localStorage`. */
 			const theme = parseTheme(
@@ -44,6 +51,13 @@ const { title } = Astro.props;
 			);
 			document.documentElement.dataset.theme = theme;
 			console.log(theme);
+			var _hmt = _hmt || [];
+			(function () {
+				var hm = document.createElement('script');
+				hm.src = 'https://hm.baidu.com/hm.js?66a15a1a177c0240ecdb490e30b35e67';
+				var s = document.getElementsByTagName('script')[0];
+				s.parentNode.insertBefore(hm, s);
+			})();
 		</script>
 	</head>
 	<body>

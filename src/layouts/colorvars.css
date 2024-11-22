@@ -41,6 +41,7 @@
 	--sl-color-gray-6: #24272f;
 	--sl-color-black: #17181c;
   --sl-color-bg-nav: var(--sl-color-gray-3);
+  --sl-sidebar-width:20rem;
 }
 /* Light mode colors. */
 :root[data-theme='light'] {

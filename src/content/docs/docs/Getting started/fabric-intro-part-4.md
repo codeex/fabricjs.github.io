@@ -1,52 +1,57 @@
 ---
 date: '2024-11-20'
 description: '理解什么是FabricJS，更好地在你的项目中使用FabricJS'
-title: Fabric.js简介：第4部分
+title: 简介：4.绘制、定制化、node应用
+sidebar:
+  order: 6
 ---
 
-## Introduction to Fabric.js. Part 4.
 
-We've covered so many topics in the previous series; from basic object manipulations to animations, events, filters, groups, and subclasses. But there's still couple of very interesting and useful things to discuss!
+在上一个系列中，我们讨论了很多主题。从基本的对象操作到动画，事件，过滤器，组和子类。但是仍然有一些非常有趣和有用的事情要讨论！
 
-### Free drawing
+### 自由绘制
 
-If there's anything `<canvas>` really shines at, it's that it has an excellent support for free drawing! Since canvas is simply a 2D bitmap — a paper to paint on — performing free drawing is very natural. And of course Fabric takes care of this for us.
+如果说有什么功能能让`<canvas>`在眼前一亮，那一定是它能够很好的支持自由绘图！由于画布只是一个2D位图， Fabric为我们提供了一张纸：可以自由绘画，而且非常自然。 
 
-A free drawing mode is enabled simply by setting `isDrawingMode` property of Fabric canvas to `true`. This immediately makes any further clicks and movements on canvas get interpreted as a pencil/brush.
+只需将Fabric画布的`isDrawingMode`属性设置为true即可启用免费绘图模式。这立即使在画布上的任何进一步的单击和移动都被解释为铅笔/画笔。 当`isDrawingMode`为true时，您可以根据需要在画布上绘制多次。但是，一旦执行任何移动，然后执行“ mouseup”事件，Fabric就会触发“ path:created”事件，并实际上将刚刚绘制的形状转换为真实的`fabric.Path`实例！ 
 
-You can paint as many times on canvas as you wish, while `isDrawingMode` is `true`. But as soon as you perform any movement, followed by a "mouseup" event, Fabric fires "path:created" event and actually transforms just-drawn shape into a real `fabric.Path` instance!
+如果随时将`isDrawingMode`设置为false，最终将在画布上仍然存在所有创建的路径对象。而且，由于它们是很好的旧`fabric.Path`对象，因此您可以根据需要进行任意修改（移动，旋转，缩放等）。 
 
-If, at any moment, you set `isDrawingMode` back to `false`, you'll end up with all of the created path objects still present on canvas. And since they're good old `fabric.Path` objects, you can modify them any way you want — move, rotate, scale, etc.
-
-There are also 2 properties available to customize free drawing — `freeDrawingBrush.color` and `freeDrawingBrush.width`. Both are available on Fabric canvas instances through `freeDrawingBrush` instance. `freeDrawingBrush.color` can be any regular color value and represents the color of a brush. `freeDrawingBrush.width` is a number in pixels, and represents brush thickness.
+还有两个可用于自定义自由绘制的属性-`freeDrawingBrush.color`和`freeDrawingBrush.width`。两者都可以通过`freeDrawingBrush`实例在Fabric画布实例上使用。 `freeDrawingBrush.color`可以是任何常规颜色值，并表示画笔的颜色。 `freeDrawingBrush.width`是一个以像素为单位的数字，代表画笔的厚度。
 
 ![](/article_assets/4_1.png)
 
-In the near future, we are planning to add more options for free drawing — various versions of a brush (e.g. spray-like or chalk-like). Also custom brush patterns, and an option to extend with your own, similar to Fabric image filters.
+在不久的将来，我们计划为免费绘画添加更多选项-各种版本的画笔（例如，类似喷雾或粉笔的刷子）。还有自定义画笔图案，以及可以自己扩展的选项，类似于Fabric图像滤镜。
 
-[**Erasing**](/erasing) is another cool available feature that plays nicely with free drawing.
+[**Erasing**](/demos/animation-easing) 擦除效果在这里也是其中很酷的效果之一.
 
-### Customization
+### 定制化
 
-One of the amazing things about Fabric is how customizable it is. You can tweak dozens of various parameters on canvas or canvas objects, in order to make things behave exactly the way you want. Let's take a look at some of them.
+Fabric的令人惊奇的事情之一是它的可定制性。您可以调整canvas或canvas对象上的数十个各种参数，以使事物的行为完全符合您想要的方式。让我们来看看其中的一些。
 
-#### Locking objects
+#### 锁定对象
 
-Every object on canvas can be locked in few ways. "lockMovementX", "lockMovementY", "lockRotation", "lockScalingX", "lockScalingY" are properties that lock corresponding object actions. So setting `object.lockMovementX` to `true` prevents object from being moved horizontally. You can still move it in vertical plane though. Simiarly, `lockRotation` prevents rotation and `lockScalingX`/`lockScalingY` — scaling. All of these are cumulative. You can combine them together in any way.
+画布上的每个对象都可以通过几种方式锁定。 “ lockMovementX”，“ lockMovementY”，“ lockRotation”，“ lockScalingX”，“ lockScalingY”是用于锁定相应对象动作的属性。因此，将`object.lockMovementX`设置为true可以防止对象水平移动。您仍然可以在垂直平面上移动它。同样，`lockRotation`防止旋转，并且`lockScalingX` /` lockScalingY `—缩放。所有这些都是累积性的。您可以通过任何方式将它们组合在一起。
 
-#### Changing borders, corners
 
-You can control objects' borders and corners visibility via "hasControls" and "hasBorders" properties. Just set them to `false` and objects instantly render "naked".
+#### 修改边框，边角
+
+您可以通过“ hasControls”和“ hasBorders”属性控制对象的边界和角的可见性。只需将它们设置为false，对象立即呈现“裸”状态。
+
 ```js
 object.hasBorders = false;
 ```
+
 ![](/article_assets/4_2.png)
+
 ```js
 object.hasControls = false;
 ```
+
 ![](/article_assets/4_3.png)
 
-You can also change their appearance by tweaking some of the customization properties "cornerDashArray", "borderDashArray", "borderColor", "transparentCorners" "cornerColor", "cornerStrokeColor", "cornerStyle", "selectionBackgroundColor", "padding" and "cornerSize" properties.
+你还可以通过调整一些自定义属性“ cornerDashArray”，“ borderDashArray”，“ borderColor”，“ transparentCorners”，“ cornerColor”，“ cornerStrokeColor”，“ cornerStyle”，“ selectionBackgroundColor”，“ padding”和“ cornerSize”来更改其外观。
+
 ```js
 object.set({
   borderColor: 'red',
@@ -54,7 +59,9 @@ object.set({
   cornerSize: 6
 });
 ```
+
 ![](/article_assets/4_4.png)
+
 ```js
 object.set({
   transparentCorners: false,
@@ -67,17 +74,19 @@ object.set({
   borderDashArray: [3, 3]
 });
 ```  
+
 ![](/article_assets/4_4b.png)
 
-#### Disabling selection
+#### 禁用选择
 
-You can disable selection of objects on canvas by setting "selection" property of canvas to `false`. This prevents selection on absolutely everything displayed on canvas. If you only need to make certain objects unselectable, you can change "selectable" property of objects. Just set it to `false` and an object loses its interactivity.
+您可以通过将canvas的“ selection”属性设置为false来禁用画布上对象的选择。这样可以防止在画布上显示的所有内容上进行选择。如果只需要使某些对象不可选择，则可以更改对象的“ selectable”属性。只需将其设置为false，对象就会失去交互性。
 
-#### Customizing selection
+#### 自定义选择行为
 
-Now, what if you don't want to disable selection, but instead want to change its appearance? No problem.
+现在，如果您不想禁用选择，而是想更改其外观怎么办？没问题。 画布上有4个控制其显示的属性-“ selectionColor”，“ selectionBorderColor”，“ selectionLikeWidth”和“ selectionDashArray”。
 
-There are 4 properties on canvas that control its presentation — "selectionColor", "selectionBorderColor", "selectionLineWidth", and "selectionDashArray". These should be pretty self-explanatory, so let's take a look at an example:
+这些应该是不言自明的，所以让我们看一个例子：
+
 ```js
 canvas.add(new fabric.Circle({ radius: 30, fill: '#f55', top: 100, left: 100 }));
 
@@ -85,15 +94,19 @@ canvas.selectionColor = 'rgba(0,255,0,0.3)';
 canvas.selectionBorderColor = 'red';
 canvas.selectionLineWidth = 5;
 ```
+
 ![](/article_assets/4_8.png)
 
-The last property — "selectionDashArray" — is not as straightforward. What it allows us to do is make selection lines dashed. The way to define dash pattern is by specifying intervals via an array. So to create a pattern where there's one long dash followed by one short dash, we could use something like `[10, 5]` as "selectionDashArray". This will draw a line that's 10px long, then skip 5px, draw 10px line again, and so on. If we were to use `[2, 4, 6]` array, the pattern would be created by drawing 2px line, then skipping 4px, then drawing 6px line, then skipping 2px, then drawing 4px line, then skipping 6px, and so on. You get the point. As an example, this is how `[5, 10]` pattern looks:
+最后一个属性“ selectionDashArray”不是那么简单。它允许我们做的是使选择线变为虚线。定义虚线图案的方法是通过数组指定间隔。因此，要创建一个模式，即先有一个长破折号，然后是一个短破折号，我们可以将[10，5]之类的内容用作“ selectionDashArray”。这将画出10px长的线，然后跳过5px，再次画10px线，依此类推。如果要使用[2，4，6]数组，则将通过绘制2px线，然后跳过4px，然后绘制6px线，然后跳过2px，再绘制4px线，然后跳过6px，来创建图案。你明白了。例如，这是[2,4,6]模式的外观：
+
+ 作为一个例子, 下面是 `[5, 10]` 图案样子：
 
 ![](/article_assets/4_9.png)
 
-#### Dashed stroke
+#### 虚线边框
 
-Similarly to "selectionDashArray" on canvas, all Fabric objects have "strokeDashArray" property responsible for dashed pattern of any stroke performed on an object.
+与画布上的“ selectionDashArray”类似，所有Fabric对象都具有“ strokeDashArray”属性，该属性负责对对象执行的任何笔划以虚线表示。
+
 ```js
 var rect = new fabric.Rect({
   fill: '#06538e',
@@ -104,77 +117,82 @@ var rect = new fabric.Rect({
 });
 canvas.add(rect);
 ```
+
 ![](/article_assets/4_13.png)
 
-#### Clickable area
+#### 可点击区域
 
-As you know, all Fabric objects have bounding box that's used to drag an object, or rotate and scale it, when controls/corners are present. You might have noticed that object can be dragged even when clicking on the space within object's bounding box where nothing is drawn.
+正如你所知，所有的Fabric对象都有边界框，当存在控件/拐角时，该边界框用于拖动对象或旋转和缩放它。您可能已经注意到，即使单击对象边界框内没有绘制任何内容的空间，也可以拖动对象。
 
-Take a look at this image:
+看一下这张图片：
 
 ![](/article_assets/4_14.png)
 
-By default, all Fabric objects on canvas can be dragged by the bounding box. However, if you want different behavior — clicking/dragging objects only by its actual contents, you can use "perPixelTargetFind" property on an object. Just set it to `true` to get the desired behavior.
+默认情况下，可以通过边界框拖动画布上的所有Fabric对象。但是，如果您想要不同的行为-仅按对象的实际内容单击/拖动对象，则可以在对象上使用“ perPixelTargetFind”属性。只需将其设置为`true`即可获得所需的行为。
 
-#### Rotating point
+#### 旋转点
 
-Since version 1.0 Fabric uses alternative UI by default — objects can no longer be scaled and rotated at the same time. Instead, there's a separate rotate control on each object. The corresponding property for that control is "hasRotatingPoint". You can customize its offset relative to the object via "rotatingPointOffset" numeric property.
+由于版本1.0 Fabric默认情况下使默认UI，因此无法再缩放和旋转对象。相反，每个对象上都有一个单独的旋转控件。该控件的相应属性是“ hasRotatingPoint”。您可以通过“ rotatingPointOffset”数字属性自定义其相对于对象的偏移量。
 
 ![](/article_assets/4_10.png)
 
-#### Object transformation
+#### 对象变换
 
-There's a number of other transformation-related properties available in Fabric **since version 1.0**. One of them is "uniScaleTransform" on canvas instance. It's `false` by default, and can be used to enable non-uniform scaling of object; in other words, it allows to change object's proportions when dragging by the corners.
+自1.0版以来，Fabric中还有许多其他与转换相关的属性。其中之一是canvas实例上的“ uniScaleTransform”。默认情况下为false，可用于启用对象的非均匀缩放；换句话说，它允许在拖动角落时更改对象的比例。
 
 ![](/article_assets/4_15.png)
 
-Then there are "centeredScaling" and "centeredRotation" properties (before v1.3.4 was one property - "centerTransform"). They specify if a center of an object should be used as an origin of transformation. When both of them are set to`true`, it replicates pre-1.0 behavior when objects were always scaled/rotated from the center. Since 1.0 origin of transformation is dynamic, which allows for finer control when scaling objects.
+然后有“ centeredScaling”和“ centeredRotation”属性（在v1.3.4之前是一个属性，即“ centerTransform”）。它们指定是否应将对象的中心用作变换的原点。当它们都设置为true时，当对象总是从中心缩放/旋转时，它将复制1.0之前的行为。由于1.0的转换原点是动态的，因此在缩放对象时可以进行更精细的控制。 
 
-The last pair of new properties is "originX" and "originY". Set accordingly to "left" and "top" by default, they allow to change object's origin of transformation programatically. When you drag object's corners, it is these properties that change dynamically under the hood.
+最后一对新属性是“originX”和“originY”。默认情况下，将其相应地设置为“left”和“top”，它们允许以编程方式更改对象的变换原点。当您拖动对象的角时，正是这些属性在引擎盖下动态变化。 
 
-So when would we change them manually? For example, when working with text objects. When you change text dynamically, and the text box dimensions increase, "originX" and "originY" dictate where the box grows. So if you need to center text object, you would set originX to "center". To stick it to the right, you would set originX to "right". And so on. This behavior resembles "position: absolute" in CSS.
+那么我们什么时候手动更改它们？例如，使用文本对象时。当您动态更改文本，并且文本框的尺寸增加时，“ originX”和“ originY”将指出框的增长位置。因此，如果需要将文本对象居中，则可以将originX设置为“ center”。要将其粘贴在右侧，可以将originX设置为“ right”。等等。此行为类似于CSS中的“ position:absolute”。
 
-#### Canvas background and overlay
+#### 画布背景和填充
 
-As you might remember from the 1st part, you can assign a color to fill entire canvas background. Just set any regular color value to "backgroundColor" property of canvas.
+你可能在第1部分中已经看到过，可以分配一种颜色来填充整个画布背景，只需将任何常规颜色值设置为画布的“ backgroundColor”属性即可。
 
+```js
 canvas.add(new fabric.Circle({ radius: 30, fill: '#f55', top: 100, left: 100 }));
 canvas.backgroundColor = 'rgba(0,0,255,0.3)';
 canvas.renderAll();
+```
 
 ![](/article_assets/4_5.png)
 
-You can go even further and assign an image as a background. You'll need to use `setBackgroundImage` method for that, passing url and an optiona completion callback.
+您甚至可以走得更远，并将图像指定为背景。为此，您需要使用setBackgroundImage方法，并传递url和optiona补全回调。
 
+```js
 canvas.add(new fabric.Circle({ radius: 30, fill: '#f55', top: 100, left: 100 }));
 canvas.setBackgroundImage('../assets/pug.jpg', canvas.renderAll.bind(canvas));
+```
 
-Is important to note that while the property is called `backgroundImage` it can host any fabric object type. You can set a `fabric.Rect` to represent an artboard, or you can set a group of objects. Same goes for the below `overlayImage` or for the `backgroundColor` that can host any filler, like gradients or patterns.
+重要的是要注意，尽管该属性称为`backgroundImage`，但它可以承载任何结构对象类型。您可以设置一个“ fabric.Rect”来代表一个画板，或者可以设置一组对象。下面的“ overlayImage”或可以托管任何填充物（例如渐变或图案）的“ backgroundColor”也是如此。
 
 ![](/article_assets/4_6.png)
 
-Finally, you can also set overlay image, in which case it will always appear on top of any objects rendered on canvas. Just use `setOverlayImage`, passing url and an optional completion callback.
+Finally, you can also set overlay image, in which case it will always appear on top of any objects rendered on canvas. Just use `setOverlayImage`, 最后，您还可以设置叠加图像，在这种情况下，叠加图像将始终显示在画布上渲染的所有对象的顶部。只需使用setOverlayImage，传递url和可选的完成回调即可。
+
 ```js
 canvas.add(new fabric.Circle({ radius: 30, fill: '#f55', top: 100, left: 100 }));
 canvas.setOverlayImage('../assets/jail\_cell\_bars.png', canvas.renderAll.bind(canvas));
 ```
+
 ![](/article_assets/4_7.png)
 
-### Fabric on Node.js
+### Node.js上应用Fabric
 
-One of the unique aspects of Fabric, is that it can work not just on a client, in a browser, but also on a server! This could be useful when you want to send data from a client and create an image of that data right on a server. Or if you simply want to use Fabric API from a console — for speed, convenience, or other reasons.
+Fabric的独特之处之一是它不仅可以在客户端，浏览器中而且可以在服务器上工作！当您要从客户端发送数据并直接在服务器上创建该数据的映像时，这可能会很有用。或者，出于速度，方便或其他原因，如果您只是想从控制台使用Fabric API。 
 
-Let's take a look at how to set up Node environment and start Fabric.
+让我们看一下如何设置Node环境并启动Fabric。 
 
-First, you need to install [Node.js](http://nodejs.org), if you haven't yet. There are few ways to install Node, depending on a platform. You can follow [these instructions](http://howtonode.org/how-to-install-nodejs) or [these](https://github.com/joyent/node/wiki/Installation).
+首先，如果尚未安装，则需要安装[Node.js](http://nodejs.org/)。根据平台的不同，安装节点的方法很少。您可以按照以下[说明](http://howtonode.org/how-to-install-nodejs)进行操作，或者[这里](https://github.com/joyent/node/wiki/Installation)。 
 
-Once Node is installed, we need to install [node-canvas](https://github.com/LearnBoost/node-canvas) library. node-canvas is a Canvas implementation for NodeJS. It relies on [Cairo](http://cairographics.org/) — 2D graphics library which can be run on Mac, Linux, or Windows. node-canvas has dedicated [installation instructions](https://github.com/LearnBoost/node-canvas/wiki) depending on your platform of choice.
+安装Node之后，我们需要安装[node-canvas](https://github.com/LearnBoost/node-canvas)库。 node-canvas是NodeJS的Canvas实现。它依靠[Cairo](http://cairographics.org/) —可以在Mac，Linux或Windows上运行的2D图形库。根据您选择的平台，node-canvas具有专用的[安装说明](https://github.com/LearnBoost/node-canvas/wiki)。 由于Fabric在Node之上运行，因此它是NPM软件包。因此，下一步是安装NPM。您可以在其[github存储库](https://github.com/isaacs/npm)中找到安装说明。 
 
-Since Fabric runs on top of Node, it comes as an NPM package. So the next step is to install NPM. You can find installation instructions in its [github repo](https://github.com/isaacs/npm).
+最后一步是使用NPM安装[Fabric软件包](https://npmjs.org/package/fabric)。只需运行`npm install fabric`（或`npm install -g fabric`以全局安装软件包）即可完成此操作。 
 
-The final step is to install [Fabric package](https://npmjs.org/package/fabric), using NPM. This is done simply by running `npm install fabric` (or `npm install -g fabric` to install package globally).
-
-If we run node console now, we should have both node-canvas and Fabric available for use:
+如果现在运行节点控制台，则应该同时使用node-canvas和Fabric：
 
 ```js
 \> node
@@ -183,7 +201,9 @@ If we run node console now, we should have both node-canvas and Fabric available
 > typeof require('fabric'); // "object"
 ```
 
-Now that everything is ready, we can try a simple "hello world" test. Let's create a helloworld.js file:
+
+现在一切就绪，我们可以尝试一个简单的“ hello world”测试。让我们创建一个helloworld.js文件：
+
 ```js
 var fs = require('fs'),
     fabric = require('fabric').fabric,
@@ -204,23 +224,21 @@ stream.on('data', function(chunk) {
   out.write(chunk);
 });
 ```
-and then run it as `node helloworld.js`. Opening helloworld.png reveals this:
+
+然后将其作为节点helloworld.js运行。打开helloworld.png揭示了这一点
 
 ![](/article_assets/4_11.png)
 
-So what's going on here? Let's go over important parts of this code.
+那么这是怎么回事？让我们来看一下这段代码的重要部分。 
 
-First, we're including Fabric itself (`fabric = require('fabric').fabric`). Then, we create the good old Fabric canvas.
+首先，我们包括了Fabric本身（`fabric = require('fabric')fabric`）。然后，我们创建好旧的Fabric画布。 然后是看起来很熟悉的对象创建（`new fabric.Text()`）和画布添加文本对象（`canvas.add(text)`）。 所有这些简单地创建了Fabric画布并将文本对象呈现到画布上。现在，如何创建画布上渲染的图像？使用`createPNGStream`方法可以在画布实例上使用。 `createPNGStream`返回Node的[流对象](http://nodejs.org/api/stream.html)，然后可以使用`on('data')`将其输出到图像文件中，并写入与图像文件相对应的流中`fs.createWriteStream()`。 
 
-Then there's familiar-looking object creation (`new fabric.Text()`) and canvas addition (`canvas.add(text)`).
+`fabric.Canvas＃createPNGStream`是特定于Node的方法之一。其他所有工作原理相同—您仍然可以像平常一样创建对象，将其添加到画布上，进行修改，渲染等。
 
-All of this simply creates Fabric canvas and renders text object onto it. Now, how to create an image of whatever is rendered on canvas? Using `createPNGStream` method available right on the canvas instance. `createPNGStream` returns Node's [stream object](http://nodejs.org/api/stream.html), and can then be output into an image file using `on('data')`, and writing into the stream corresponding to an image file (`fs.createWriteStream()`).
+#### Node服务和Fabric
 
-`fabric.Canvas#createPNGStream` is one of the methods specific to Node. Everything else works the same — you can still create objects as you usually would, add them on canvas, modify, render, and so on.
+作为示例，让我们创建一个简单的Node服务器，该服务器将侦听JSON格式的Fabric数据的传入请求，并输出该数据的图像。整个脚本只有25行！
 
-#### Node server and Fabric
-
-As an example, let's create a simple Node server that will listen to incoming requests with Fabric data in JSON format, and output an image of that data. The entire script is only 25 lines long!
 ```js
 var fabric = require('fabric').fabric, // or import { fabric } from 'fabric';
     http = require('http'),
@@ -248,27 +266,35 @@ var server = http.createServer(function (request, response) {
 
 server.listen(PORT);
 ```
-Most of the code in this snippet should be already familiar. The gist of it is inside server response. We're creating Fabric canvas, loading JSON data onto it, rendering it, and streaming final result as server response.
 
-To test it out, let's take the data for a green, slightly rotated rectangle:
+此代码段中的大多数代码应该已经很熟悉。其要点是服务器响应内部。我们正在创建Fabric画布，将JSON数据加载到该画布上，进行渲染，并将最终结果作为服务器响应进行流式传输。
+
+ 为了对其进行测试，让我们为一个绿色的，稍微旋转的矩形获取数据：
+
 ```json
 {"objects":[{"type":"rect","left":103.85,"top":98.85,"width":50,"height":50,"fill":"#9ae759","overlayFill":null,"stroke":null,"strokeWidth":1,"strokeDashArray":null,"scaleX":1.39,"scaleY":1.39,"angle":30,"flipX":false,"flipY":false,"opacity":0.8,"selectable":true,"hasControls":true,"hasBorders":true,"hasRotatingPoint":false,"transparentCorners":true,"perPixelTargetFind":false,"rx":0,"ry":0}],"background":"rgba(0, 0, 0, 0)"}
 ```
-URI-encode it:
-```
+
+URI-编码后:
+
+```txt
 %7B"objects"%3A%5B%7B"type"%3A"rect"%2C"left"%3A103.85%2C"top"%3A98.85%2C"width"%3A50%2C"height"%3A50%2C"fill"%3A"%239ae759"%2C"overlayFill"%3Anull%2C"stroke"%3Anull%2C"strokeWidth"%3A1%2C"strokeDashArray"%3Anull%2C"scaleX"%3A1.39%2C"scaleY"%3A1.39%2C"angle"%3A30%2C"flipX"%3Afalse%2C"flipY"%3Afalse%2C"opacity"%3A0.8%2C"selectable"%3Atrue%2C"hasControls"%3Atrue%2C"hasBorders"%3Atrue%2C"hasRotatingPoint"%3Afalse%2C"transparentCorners"%3Atrue%2C"perPixelTargetFind"%3Afalse%2C"rx"%3A0%2C"ry"%3A0%7D%5D%2C"background"%3A"rgba(0%2C%200%2C%200%2C%200)"%7D
 ```
-And pass to a server via a "data" query param. The immediate response, coming back with "image/png" Content-type, looks like this:
+
+并通过“data”查询参数传递给服务器。立即响应，返回“ image/png”内容类型，如下所示
 
 ![](/article_assets/4_12.png)
 
-As you can see, working with Fabric on a server is very easy and straightforward. Feel free to experiment with this snippet. Perhaps change canvas dimensions from within URL parameters, or modify client data before returning image as a response.
+在服务器上使用Fabric是非常容易和直接的，随时尝试使用此代码段。
 
-#### Custom fonts in Fabric on Node
+也可以从URL参数中更改画布尺寸，或者在返回图像作为响应之前修改客户端数据。
 
-Before we can use custom fonts in Fabric we need to load them first. In the browser (client-side) the most common way to load fonts is by using the [CSS3 @font-face rule](http://www.w3.org/TR/css3-fonts/#font-face-rule). In Fabric on Node (server-side) we can utilize the node-canvas **Font API**, which makes loading fonts a walk in the park.
+#### Node环境下定制字体
 
-The example below demonstrates how to load and use custom fonts. Save it to customfont.js and make sure the paths to the font files are correct. In this example we use [Ubuntu](http://www.google.com/fonts/specimen/Ubuntu) as our custom font.
+Before we can use custom fonts in Fabric we need to load them first. In the browser (client-side) the most common way to load fonts is by using the 在Fabric中使用自定义字体之前，我们需要先加载它们。在浏览器（客户端）中，最常见的加载字体的方法是使用[CSS3 @ font-face](http://www.w3.org/TR/css3-fonts/#font-face-rule)规则。在节点上的Fabric（服务器端）中，我们可以利用node-canvas字体API，该API使在公园中散步加载字体成为可能。 
+
+下面的示例演示如何加载和使用自定义字体。将其保存到customfont.js，并确保字体文件的路径正确。在此示例中，我们使用[Ubuntu](http://www.google.com/fonts/specimen/Ubuntu)作为我们的自定义字体。
+
 ```js
   var fs = require('fs'),
       fabric = require('fabric').fabric; // or import { fabric } from 'fabric';
@@ -288,14 +314,14 @@ The example below demonstrates how to load and use custom fonts. Save it to cust
 
   var canvas = new fabric.StaticCanvas(null, { width: 300, height: 250 });
 
-  var text = new fabric.Text('regular', {
+  var text = new fabric.FabricText('regular', {
       left: 0,
       top: 50,
       fontFamily: 'Ubuntu'
   });
   canvas.add(text);
 
-  text = new fabric.Text('bold', {
+  text = new fabric.FabricText('bold', {
       left: 0,
       top: 100,
       fontFamily: 'Ubuntu',
@@ -303,7 +329,7 @@ The example below demonstrates how to load and use custom fonts. Save it to cust
   });
   canvas.add(text);
 
-  text = new fabric.Text('italic', {
+  text = new fabric.FabricText('italic', {
       left: 0,
       top: 150,
       fontFamily: 'Ubuntu',
@@ -311,7 +337,7 @@ The example below demonstrates how to load and use custom fonts. Save it to cust
   });
   canvas.add(text);
 
-  text = new fabric.Text('bold italic', {
+  text = new fabric.FabricText('bold italic', {
       left: 0,
       top: 200,
       fontFamily: 'Ubuntu',
@@ -326,13 +352,17 @@ The example below demonstrates how to load and use custom fonts. Save it to cust
       out.write(chunk);
   });
 ```
-Running the example with `node customfont.js` creates an image (customfont.png) that looks like this:
+
+使用节点`customfont.js`运行示例将创建一个如下图所示的图像（customfont.png）：
 
 ![Custom fonts](/article_assets/4_16.png)
 
-Lets have a closer look at what's happening. On fabric.nodeCanvas is exposed the node-canvas library required from JSDOM to interface the node-canvas with the HTMLCanvas Api. For each font file we want to use we need to register the file with `fabric.nodeCanvas.registerFont()` by passing the font file _path_ and an object that specifies the font properties. Remember that this has to happen before creating the Canvas itself.
+让我们仔细看看发生了什么。
 
-Now we can use our font by setting the **fontFamily** property of `fabric.Text` objects to the font name. In combination with the **fontWeight** and **fontStyle** properties we are able to apply the font faces we've added. See [Part 2 (Text)](/fabric-intro-part-2/#text) for more info on these properties.  
-Note that the example shows how to use custom fonts when creating new text objects, but this also applies to text objects loaded via JSON.
+在fabric.nodeCanvas上，公开了JSDOM所需的节点画布库，以将node-canvas library与HTMLCanvas Api接口连接起来。对于我们要使用的每个字体文件，我们需要通过传递字体文件路径和指定字体属性的对象来向`fabric.nodeCanvas.registerFont()`注册该文件。请记住，这必须在创建Canvas本身之前发生。 
 
-And so this brings us to the end of the 4-part series on Fabric. I hope you're now equiped with enough knowledge to create something interesting, cool, useful, funny, challenging, exciting!
+现在，我们可以通过将`fabric.FabricText`对象的fontFamily属性设置为字体名称来使用我们的字体。结合fontWeight和fontStyle属性，我们可以应用添加的字体。有关这些属性的更多信息，请参见[第2部分（文本）](https://github.com/eternitywith/fabric.js-docs-cn/blob/master/Tutorial/Introduction%20to%20Fabric.js.%20Part%202.md/#text)。 请注意，该示例显示了在创建新的文本对象时如何使用自定义字体，但这也适用于通过JSON加载的文本对象。 
+
+因此，这使我们结束了有关Fabric的4部分系列的结尾。
+
+希望您现在已经掌握了足够的知识，可以创建有趣，酷，有用，有趣，具有挑战性，令人兴奋的东西！

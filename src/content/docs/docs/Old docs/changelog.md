@@ -1,37 +1,38 @@
 ---
 date: '2017-06-18'
-description: 'Changelog for version 2 to 5'
-title: 'Changelog'
+description: '版本更新记录 v2-v5'
+title: '版本更新记录-v2-v5'
 ---
 
-## Fabric.js release highlights
-Find general upgrades notes <a href="/upgrade-guide">here</a>
+## Fabric.js 版本发布亮点
+查看一般升级说明，请访问 <a href="/docs/upgrading/upgrade-guide">这里</a>
 
-### Version 5.0.0
+### 版本 5.0.0
 
-This is last major version of fabricJS written in ES5.
-There aren't big new breaking changes, the main reason for the major increase was a node update that was required to remove a vulnerability in a JSDOM sub dependency, we bumped node to 14 minimum and we removed many deprecated methods.
-There is a full list of changes in order to handle this upgrade at this link: [v5 breaking changes](/v5-breaking-changes).
+这是 Fabric.js 的最后一个主要版本，使用 ES5 编写。
+没有大的破坏性变化，主要的版本号提升是由于需要更新 Node 版本，以移除 JSDOM 子依赖中的一个漏洞。我们将 Node 最低版本更新为 14，并且移除了许多已废弃的方法。
+有关如何处理此升级的完整变更列表，请查看：[v5 breaking changes](/docs/upgrading/v5-breaking-changes)。
 
-There are also many changes from the contributors, especially Sachar and Steve, that are officially part of the team now.
+此外，贡献者，特别是 Sachar 和 Steve，做出了很多贡献，他们现在正式成为团队成员。
 
-Nice additions:
-- you can now draw a straight line with pencil brush pressing shiftKey
-- it is now possible to access all animations that are currently running, see [`fabric.runningAnimations`](/fabric-intro-part-2#running_animations) [Shachar Nencel](https://github.com/ShaMan123)
-- The Eraser brush (optional) has been rewritten in order to fix some problems and now supports undoing out of the box [Shachar Nencel](https://github.com/ShaMan123)
-- add pathAlign to text on paths [Steve Eberhardt](https://github.com/melchiar)
-- stroke bounding box for objects with acute angles has been fixed almost completely (`miter` is fully supported) [Shachar Nencel](https://github.com/ShaMan123)
+**新功能：**
+- 现在你可以通过按住 Shift 键来绘制直线（使用铅笔画笔）。
+- 现在可以访问所有当前运行的动画，参见 [`fabric.runningAnimations`](/fabric-intro-part-2#running_animations) [Shachar Nencel](https://github.com/ShaMan123)
+- 擦除画笔（可选）已重写，以修复一些问题，现在支持内建的撤销功能 [Shachar Nencel](https://github.com/ShaMan123)
+- 为路径文本添加 `pathAlign` 属性 [Steve Eberhardt](https://github.com/melchiar)
+- 对具有锐角的对象的描边边界框进行了几乎完全修复（`miter` 完全支持） [Shachar Nencel](https://github.com/ShaMan123)
 
-Notable fixes:
-- many control box fixes
-- performance fix after canvas resize
-- performance fix for rtl/ltr
-- performance fix for 0 width textlines
+**重要修复：**
+- 许多控制框修复
+- 画布大小调整后的性能修复
+- RTL/LTR 的性能修复
+- 对 0 宽文本行的性能修复
 
-And:
-- different reported security issues
-- path measurements consistency fixes
-- 2 small fixes in gesture handling
+**其他改进：**
+- 解决了多个安全问题
+- 路径测量一致性修复
+- 手势处理中的两个小修复
+
 
 ```
 - fix(fabric.Canvas): unflag contextLost after a full re-render [`#7646`](https://github.com/fabricjs/fabric.js/pull/7646)

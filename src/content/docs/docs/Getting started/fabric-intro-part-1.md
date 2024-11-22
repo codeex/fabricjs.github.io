@@ -1,7 +1,7 @@
 ---
 date: '2024-11-20'
 description: '理解什么是FabricJS，更好地在你的项目中使用FabricJS'
-title: Fabric.js简介：第1部分
+title: 简介：1.对象、画布、图像、路径
 sidebar:
   order: 3
 ---
@@ -344,7 +344,7 @@ staticCanvas.add(
 
 ### 图像
 
-说起图片… 在画布上添加矩形和圆形很有趣，但是为什么我们不玩一些图像呢？就像你现在想像的那样，Fabric使这变得容易。让我们实例化`FabricImage`对象并将其添加到画布：
+说起图片… 在画布上添加矩形和圆形很有趣，但是为什么我们不玩一些图像呢？就像你现在想像的那样，Fabric使这变得容易。让我们实例化`FabricImage`对象并将其添加到画布，更多精彩实战，请关注[webmote](https://blog.csdn.net/codeex)：
 
 (html)
 

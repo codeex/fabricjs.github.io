@@ -1,25 +1,26 @@
 ---
 date: '2022-02-01'
 description: A list of breaking changes from v4 to v5
-title: Upgrade to fabric 5.x
+title: 升级到 fabric 5.x
 ---
 
-First of all the minimum node version now supported is 14.
-JSDOM will work with 12, and that was the reason to change, but we felt like pushing for 14 at least was the right thing to do.
+首先，现在支持的最低 Node 版本是 14。
+JSDOM 依然可以在 12 版本上工作，这是进行版本升级的原因之一，但我们认为将最低版本提升至 14 是更合适的做法。
 
-In fabricJS 4.x there were some deprecated methods and functions kept for backward compatibility.
+在 Fabric.js 4.x 中，出于向后兼容的考虑，一些已废弃的方法和函数被保留了。
 
-### Circle startAngle and endAngle
+### Circle.startAngle 和 Circle.endAngle
 
-Let's start with the worst change: `Circle.startAngle` and `Circle.endAngle` are now in degree and no more in radians, fo consistency reason.
+我们从最麻烦的变化开始：`Circle.startAngle` 和 `Circle.endAngle` 现在以度数表示，而不再是弧度，这样做是为了保持一致性。
 
-It invalidates all old design that uses circles and that were exported with default values included.
+这意味着使用圆形并包含默认值的旧设计将会失效。
 
-This is a wild disruptive change, all the others are fairly trivial and should not create any issue, if not with projects that used custom functionalities and overrides.
+这是一个非常破坏性的变化，其它变化都相对简单，应该不会造成太大问题，除非项目中使用了自定义功能或覆盖了方法。
 
-#### What to do
+#### 该怎么办？
 
-Well here is tricky, you need to attach a reviver when you import your JSON data or override the fromObject of circle to maintain compatibility.
+解决方案有点棘手，你需要在导入 JSON 数据时附加一个“复生器”（reviver），或者覆盖 `Circle.fromObject` 方法来保持兼容性。
+
 
 ```js
 myCanvas.loadFromJSON(data,

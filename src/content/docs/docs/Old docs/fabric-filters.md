@@ -1,13 +1,14 @@
 ---
 date: '2017-07-29'
-description: 'Changelog for version 1 of Fabric.JS'
-title: 'Fabric filters'
+description: 'Fabric 滤镜'
+title: 'Fabric 滤镜'
 ---
-### Introduction
+### 介绍
 
-Fabric has a filtering engine that can work on both WEBGL or plain CPU javascript.  
-Fabric has 2 classes to handle filtering, one is called `WebglFilterBackend` another is `Canvas2dFilterBackend`.  
-The first time you get to filter an image, this code is run:
+Fabric 拥有一个过滤引擎，可以在 WEBGL 或普通的 CPU JavaScript 上运行。  
+Fabric 有两个类来处理过滤，一个叫做 `WebglFilterBackend`，另一个是 `Canvas2dFilterBackend`。  
+当你第一次对图像进行过滤时，以下代码会被执行：
+
 ```js
     fabric.initFilterBackend = function() {
       if (fabric.enableGLFiltering &&  fabric.isWebglSupported && fabric.isWebglSupported(fabric.textureSize)) {
@@ -20,11 +21,12 @@ The first time you get to filter an image, this code is run:
     };
  ``` 
 
-This code will identify if the WEBGL is enabled and supported and set in fabric the backend to use.  
+这段代码将识别是否启用了并支持 WEBGL，并在 Fabric 中设置要使用的后端。
 
 ### Canvas2d backend
 
-The canvas backend is very simple. It creates an object containing some basic properties:
+画布后端非常简单。它创建了一个包含一些基本属性的对象：
+
 ```js
 
     var pipelineState = {
@@ -39,18 +41,24 @@ The canvas backend is very simple. It creates an object containing some basic pr
     };
 ```  
 
-Then this object is sent to every `applyTo` function of each filter in the chain. The apply2d function is triggered. This function is problably ( but is not necessary ) going to modify imageData. At the end of the filter chain this imageData is applied to the canvasEl that then will be referenced as the `fabric.Image` instance `.element` property, that is the one that gets displayed on the `fabric.Canvas`.  
-The applyTo filter can do different things from manipulating the pixel values as long as it mutates the imageData. Writing a filter that apply a mask using `globalCompositeOperation` and another image via `context.drawImage` is another way to filter the image.
+然后，这个对象被传递给链中每个过滤器的 `applyTo` 函数。触发 `apply2d` 函数。这个函数可能（但不一定）会修改 `imageData`。在过滤器链的末尾，这个 `imageData` 被应用到 `canvasEl` 上，随后它会被引用为 `fabric.Image` 实例的 `.element` 属性，这就是显示在 `fabric.Canvas` 上的图像。  
 
-### WEBGL backend
+`applyTo` 过滤器可以做不同的事情，从操作像素值到修改 `imageData`。编写一个使用 `globalCompositeOperation` 和另一个图像通过 `context.drawImage` 来应用遮罩的过滤器，是另一种过滤图像的方法。
 
-Webgl context is more complicated to handle than canvas2d context.  
-To be filtered images needs to be put in a texture. Texture size limit varies with hardware and drivers.  
-Number of active contexts is limited on the browsers, so filtering many images one after the other often crash the browser.  
-So to achieve something that is stable and usable fabricjs needs to make compromises. A canvas get initialized at 2048x2048 that looks like a safe limit for old hardware. This limit the max image size that can be filtered with fabricjs at that size unless the dev decide to set it higher setting the parameter `fabric.textureSize`.  
-You are still limited from the maximum canvas size in a browser. So the minimum between canvas size and maxTextureSize is your size cap for image filterin in webgl. This initialized canvas gets referenced in the filter backend and will be used as final step to draw the result of the WEBGL operations in the filter chain.  
-Every image gets assigned a textured id in the constructor, the first time the image gets filtered, the image gets loaded as texture once then the same texture gets reused next time for faster filtering.  
-Bringing the result of the webgl filter chain down to the main fabric.Canvas is a costly operation that gets executed either with a getImageData or with drawimage, depending what is the fastest result from a syntetic benchmark executed when the WEBGL backend gets initialized.
+
+### WEBGL 背景知识
+
+WebGL 上下文比 Canvas2D 上下文更复杂。  
+要进行过滤的图像需要被放入纹理中。纹理的大小限制会根据硬件和驱动程序有所不同。  
+浏览器中活动上下文的数量是有限制的，因此连续过滤多个图像通常会导致浏览器崩溃。  
+为了实现稳定且可用的效果，FabricJS 需要做出妥协。一个画布初始化为 2048x2048，这看起来是旧硬件的安全限制。除非开发者决定通过设置 `fabric.textureSize` 参数来提高这个限制，否则这将限制使用 FabricJS 过滤的最大图像尺寸。  
+你仍然受限于浏览器中的最大画布大小。因此，图像过滤的尺寸上限是画布尺寸和最大纹理尺寸之间的最小值。这个初始化的画布会在过滤后端中被引用，并用作 WEBGL 操作链中最后一步来绘制结果。
+
+每个图像在构造函数中都会分配一个纹理 ID，第一次对图像进行过滤时，图像会被加载为纹理，一旦加载，下一次过滤时会重复使用相同的纹理，以加快过滤速度。
+
+将 WebGL 过滤链的结果传回到主 `fabric.Canvas` 是一项昂贵的操作，它通过 `getImageData` 或 `drawImage` 执行，具体取决于哪个方法在 WEBGL 后端初始化时经过合成基准测试后表现更快。
+
+
 ```js
     var pipelineState = {
       originalWidth: source.width || source.originalWidth,
@@ -71,47 +79,51 @@ Bringing the result of the webgl filter chain down to the main fabric.Canvas is 
     };
 ```  
 
-Then this object is sent to every `applyTo` function of each filter in the chain. The applyToWebgl function is triggered. Each applyToWebgl iteration read from a texture and write to the other in the couple A - B.  
-The first filter reads from originalTexture and write to A, then we swap between A and B, till the last filter that instead of writing the data to another texture, paints it on the canvas element that we are using in glmode.  
-From this canvas then we make a copy to the final canvas element that will be referenced in the `fabric.Image` as the `.element` property that represent the final filtered image.  
-Other than collecting the data and creating the pipelineState object, the webgl backend creates and keep a reference of created textures.
+然后，这个对象被传递给链中每个过滤器的 `applyTo` 函数。触发 `applyToWebgl` 函数。每次 `applyToWebgl` 的迭代都从一个纹理读取数据，并将其写入 A-B 对中的另一个纹理。
 
-### The fabric filter
+第一个过滤器从 `originalTexture` 读取数据并写入 A，然后我们在 A 和 B 之间交换，直到最后一个过滤器，它不是将数据写入另一个纹理，而是将其绘制到我们在 `glmode` 中使用的画布元素上。
 
-fabric has a basic non working class, used to keep all the basic filter functionality, from which we extend each filter class.  
-Once the filter backend gathered the necessary data for filtering, the `pipelineState`, what it does is:  
+然后，从这个画布中我们将其复制到最终的画布元素，该元素将在 `fabric.Image` 中作为 `.element` 属性引用，表示最终的过滤图像。
+
+除了收集数据并创建 `pipelineState` 对象外，WebGL 后端还创建并保留对创建的纹理的引用。
+
+
+### Fabric 过滤器
+
+Fabric 有一个基本的非工作类，用于保留所有基本的过滤功能，我们从这个类扩展每个过滤器类。  
+一旦过滤器后端收集了过滤所需的必要数据，即 `pipelineState`，它的作用是：
+ 
 ```js
     filters.forEach(filter => {
       filter.applyTo(pipelineState)
     });
 ```
 
-This will make iterate each filter over the data, producing the final result. Each webgl filter needs a series of step before being used, that can be executed once:
+这将使每个过滤器在数据上进行迭代，产生最终结果。每个 WebGL 过滤器在使用之前需要一系列步骤，这些步骤只需要执行一次：
 
-    - compiling the vertex shader
-    - compiling the fragment shader
-    - linking the 2 pieces in a program
-    - keep track of the identifiers that represets our filter parameters
-  
+- 编译顶点着色器
+- 编译片段着色器
+- 将这两个部分链接成一个程序
+- 跟踪表示我们过滤器参数的标识符
 
-and some operations that gets exectued each filtering:
+而一些每次过滤时都会执行的操作：
 
-    - send data to the program when is filtering time
-    - bind additional textures if the filter needs them
-  
+- 在过滤时将数据发送到程序
+- 如果过滤器需要其他纹理，则绑定额外的纹理
 
-I'm not going in details over the webgl code for those operations, since there are better tutorial and example online ( where i took most of the inspiration and code ).  
-What is important is that fabric exposes a way to provide a fragment shader, a javascript function ( for non webgl filtering ), eventually a vertex shader and the it will handle all the rest to make it happen.
+我不会详细讲解 WebGL 代码的这些操作，因为网上有更好的教程和示例（我从中获得了大部分的灵感和代码）。  
+重要的是，Fabric 提供了一种方式来提供片段着色器、一个 JavaScript 函数（用于非 WebGL 过滤），以及最终一个顶点着色器，然后它将处理剩余的部分来实现过滤功能。
 
-### An example of fabric filter, Brightness
+### 一个 Fabric 过滤器示例：亮度（Brightness）
 
-To create a filter you need to know how it operates over the image data. The brightness filter add a or subtract from each channel a value.  
-We will need a filter parameter to represent how much we want this value to be and the functions to apply it with plain JS or with WEBGL.
+要创建一个过滤器，你需要了解它是如何在图像数据上操作的。亮度过滤器是通过给每个通道加上或减去一个值来实现的。  
+我们需要一个过滤器参数来表示我们希望这个值是多少，并且需要函数来用纯 JavaScript 或 WebGL 应用它。
 
-#### The javascript version
+#### JavaScript 版本
 
-For the plain javascript version, we need to add a value to each channel of imageData except the alpha.  
-In fabricjs this means we have to populate the apply2d function of the filter with an iterator that add the brightness value to 3 bytes out of 4:
+对于纯 JavaScript 版本，我们需要给 `imageData` 中的每个通道（除了 alpha 通道）加上一个值。  
+在 FabricJS 中，这意味着我们必须填充过滤器的 `apply2d` 函数，使用一个迭代器将亮度值加到 4 个字节中的 3 个字节上：
+
 ```js
     /**
      * Apply the MyFilter operation to a Uint8ClampedArray representing the pixels of an image.
@@ -135,12 +147,13 @@ In fabricjs this means we have to populate the apply2d function of the filter wi
      },
 ```
 
-That's it. At this point the image data has been changed, the function does not return anything and the pipelineState gets passed to the next filter.
+就是这样。此时，图像数据已经被修改，函数不返回任何内容，`pipelineState` 会被传递给下一个过滤器。
 
-#### The WEBGL version
+#### WebGL 版本
 
-The WEBGL version require to write a fragment shader insted of javascript function. FabricJS provides a standard function that does not change anything to start with. I will not go in detail of what you can do or not do with WEBGL, since i have not the necessary expertise an since there is much material out ther with lot of explanations.  
-The basic fragment shader looks like this:
+WebGL 版本需要编写一个片段着色器，而不是 JavaScript 函数。FabricJS 提供了一个标准的函数，初始时不会进行任何更改。我不会详细讨论你可以或不能在 WebGL 中做什么，因为我没有足够的专业知识，而且网上有很多关于此的材料和解释。  
+基本的片段着色器如下所示：
+
 ```js
 /**
  * Fragment source for the brightness program
@@ -153,7 +166,9 @@ The basic fragment shader looks like this:
     gl_FragColor = color;
 }
 ```
-We need to add a parameter to represent the brightness and add this paramter to each pixel of the rgb value of the color.
+
+我们需要添加一个参数来表示亮度，并将这个参数添加到颜色的每个像素的 RGB 值中。
+
 ```js
 /**
  * Fragment source for the brightness program
@@ -169,8 +184,10 @@ We need to add a parameter to represent the brightness and add this paramter to 
 }
 ```
 
-we added a float uniform called uBrightness outside the main loop. The main loop adds this value to the rgb vector for each pixel of the image that we extract from the texture using the vTextCoord.  
-To make fabric find and valorize that value in the fragment shader with our brightness level we need to populate 2 methods of the filter class:
+我们在主循环外添加了一个浮动 uniform，叫做 `uBrightness`。主循环会将这个值添加到每个像素的 RGB 向量中，这些像素的图像数据是通过 `vTextCoord` 从纹理中提取的。
+
+为了让 Fabric 在片段着色器中找到并赋值这个亮度值，我们需要填充过滤器类的两个方法：
+
 ```js
 /**
 * Return WebGL uniform locations for this filter's shader.
@@ -195,9 +212,11 @@ sendUniformData: function(gl, uniformLocations) {
 },
 ```
 
-`getUniformLocations` is instructed to find in the program the variable named `uBrightness`. This function is called once per filter initializaion.  
-`sendUniformData` is instructed to valorize the location found with the value of the brightness property of the filter. This function is executed each filtering.  
-if your filter needs more parameters, you will add them in the exacty same way. You give them a name in the fragmenShader, then you write a `getUniformLocations` and a `sendUniformData` that locate and valorize more parameters:
+`getUniformLocations` 被指示在程序中查找名为 `uBrightness` 的变量。这个函数在每次过滤器初始化时调用一次。  
+`sendUniformData` 被指示将找到的位置用过滤器的亮度属性的值进行赋值。这个函数在每次过滤时执行。
+
+如果你的过滤器需要更多的参数，你可以以完全相同的方式添加它们。你在片段着色器中给它们命名，然后编写 `getUniformLocations` 和 `sendUniformData` 来定位和赋值更多的参数：
+
 ```js
     getUniformLocations: function(gl, program) {
       return {
@@ -214,18 +233,19 @@ if your filter needs more parameters, you will add them in the exacty same way. 
     },
 ```
 
-After that the filter just works. On the github repository you can find an empty boilerplate class to help you start with your own filter. [empty filter class](https://github.com/kangax/fabric.js/blob/master/src/filters/filter_boilerplate.js)
+之后，过滤器就可以正常工作了。在 GitHub 仓库中，你可以找到一个空的模板类来帮助你开始创建自己的过滤器。 [空过滤器类](https://github.com/kangax/fabric.js/blob/master/src/filters/filter_boilerplate.js)
 
-### Common errors and problems:
+### 常见错误和问题：
 
-#### Picture is cutted
+#### 图片被裁剪
 
-The picture will be painted over a tile of 2048x2048 size, bigger pictures won't fit. `fabric.textureSize` set at 2408 is a safe limit. Most of the hardware will support 4096 and so 4096x4096 is a limit that will probably work and give you less headaches. Take in mind that canvas has a max size too. If you are supporting browsers like IE11 you will have probably problems with canvases bigger than 5000 on a size, whatever your webgl hardware is capable of.
+图片将会被绘制到一个 2048x2048 的纹理瓦片上，较大的图片无法完全适配。将 `fabric.textureSize` 设置为 2408 是一个安全的限制。大多数硬件会支持 4096，因此 4096x4096 是一个可能会正常工作并且让你少受困扰的限制。请注意，画布也有最大尺寸。如果你需要支持像 IE11 这样的浏览器，可能会遇到画布尺寸大于 5000 时的问题，无论你的 WebGL 硬件能力如何。
 
-#### Old filter values are incompatible
+#### 旧的过滤器值不兼容
 
-With this change each filter changed and the default values are between 0 and 1 or -1 and 1.  
-Removed filters are: blend_filter splitted in blend_color and blend_image, gradienttransparency is removed, mask_filter is part of blendImage, removewhite is now removecolor, tint filter is now a part of blend color. Here follow a conversion pattern from 1.x filtering:
+随着这个变更，每个过滤器都发生了变化，默认值现在是在 0 和 1 或 -1 和 1 之间。  
+已移除的过滤器有：`blend_filter` 被拆分为 `blend_color` 和 `blend_image`，`gradienttransparency` 被移除，`mask_filter` 成为 `blendImage` 的一部分，`removewhite` 现在变为 `removecolor`，`tint` 过滤器现在是 `blend_color` 的一部分。以下是从 1.x 版本过滤器的转换模式：
+
 ```js
 fabric.Image.filters.BaseFilter.fromObject = function(object, callback) {
   switch (object.type) {
@@ -277,11 +297,11 @@ fabric.Image.filters.BaseFilter.fromObject = function(object, callback) {
 };
 ```
 
-#### Usage of gpu memory
+#### GPU 内存使用
 
-Each image will create a texture in the gpu memory on first filtering. The texture is identified with an ID and is cached for faster refiltering.  
-is dev duty to clean this cache using image.dispose() when he knows he will not use the image anymore. Some image could possibly share the same asset but have 2 copies of the texture in memory, to solve this you can assign to an image the cacheKey property to a fixed value before filtering in order to get the same texture of another existing image. Also canvas.dispose() will call dispose on each image that was on the canvas.
+每个图像在第一次过滤时会在 GPU 内存中创建一个纹理。这个纹理通过 ID 进行标识，并且会被缓存以加速后续的过滤操作。  
+开发者的责任是在确认不再使用该图像时，通过调用 `image.dispose()` 来清理这个缓存。一些图像可能会共享相同的资源，但在内存中有两个纹理副本，为了避免这种情况，可以在过滤前为图像分配一个固定的 `cacheKey` 属性值，这样它就能使用与另一个现有图像相同的纹理。此外，`canvas.dispose()` 会调用画布中每个图像的 `dispose` 方法。
 
-#### Manually initialize the backend
+#### 手动初始化后端
 
-Fabric `fabric.isWebglSupported(fabric.textureSize);` is a fundamental step for webgl to work, is called on first filtering operation from the initBackend procedure. If you plan on using the 2 backends manually, creaing a webgl and a canvas2d to swap on command, you need to run `fabric.isWebglSupported(fabric.textureSize);` once manually. This function will also try to detect your hardware max precision and swap it at runtime since some hardware could not support `highp` by default.
+Fabric 中的 `fabric.isWebglSupported(fabric.textureSize);` 是 WebGL 工作的一个基本步骤，它会在第一次过滤操作时从 `initBackend` 过程调用。如果你计划手动使用这两个后端，创建一个 WebGL 和一个 Canvas2D 进行切换，你需要手动运行 `fabric.isWebglSupported(fabric.textureSize);` 一次。这个函数还会尝试检测你的硬件最大精度，并在运行时进行调整，因为某些硬件默认可能不支持 `highp` 精度。

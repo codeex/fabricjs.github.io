@@ -1,23 +1,31 @@
 ---
 date: '2017-07-29'
 description: A list of breaking changes from v1 to v2
-title: Upgrade to fabric 2.x
+title: 升级到 fabric 2.x
 ---
 
-### Removed methods
+### 移除的方法
 
-Object.getWidth() and Object.getHeight have been renamed to getScaledWidth and getScaledHeight.  
-The reason behind it is that they were confusion on what they were supposed to give back.  
-If you use the accessors optional mixin, you get them back but they will just be getters for .width and .height
+`Object.getWidth()` 和 `Object.getHeight()` 已被重命名为 `getScaledWidth()` 和 `getScaledHeight()`。  
+这样做的原因是，这两个方法的返回值存在混淆，无法明确表示其返回的是对象的缩放宽度或原始宽度。  
+如果你使用了可选的访问器混入（accessors mixin），这两个方法会继续存在，但它们现在仅作为 `.width` 和 `.height` 的 getter。
 
 ### fabric.PathGroup
 
-Fabric.PathGroup has been removed. The class existed as container able to render the imported SVGs.  
-Since now fabric.Group can handle it, the class has been removed from the codebase.
+`fabric.PathGroup` 已被移除。这个类曾是一个容器，用于渲染导入的 SVG 文件。  
+由于现在 `fabric.Group` 已经能够处理这些功能，因此 `fabric.PathGroup` 类已被移除。
 
-#### Converting existing fabric.PathGroup in fabric.Group
+#### 将现有的 `fabric.PathGroup` 转换为 `fabric.Group`
 
-To convert a PathGroup to a Group from an old cobdebase we have to add a function to fabric so that the process can go smooth.
+为了方便将旧代码中的 `PathGroup` 转换为 `Group`，可以添加以下函数来平滑过渡：
+```javascript
+// 示例转换函数
+if (object instanceof fabric.PathGroup) {
+  const group = new fabric.Group(object.getObjects());
+  object.canvas.add(group);
+  object.canvas.remove(object);
+}
+
 ```js
     fabric.PathGroup = { };
     fabric.PathGroup.fromObject = function(object, callback) {

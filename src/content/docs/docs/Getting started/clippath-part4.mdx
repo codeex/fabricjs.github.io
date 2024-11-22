@@ -1,0 +1,19 @@
+---
+date: 2018-07-07
+description: 使用绝对定位的剪裁路径剪切对象
+title: 简介：10.使用绝对定位的剪裁路径
+---
+import { Example1, Example2 } from './clippath-part4/clippath-part4';
+
+我们可以对一个对象应用clipPath，指定它应该是绝对定位的。这意味着clipPath不是相对于对象的中心，而是仅仅定位在画布上。
+物体将不会移动，而clipPath将保持稳定。效果是clipPath在画布上创建了一个形状，并且只允许它自己的对象出现在画布中。
+
+<Example1 client:idle />
+
+### 颠倒的剪裁路径
+
+我们还可以裁剪具有从clipPath定义的倒置形状的对象。 警告：如果创建一个组，则必须反转该组。反转组中用作clipPath的单个对象不会产生任何效果，因此不受支持。 
+
+您也可以使用单个对象的globalCompositeOperation获得很酷的效果，但是也不支持。
+
+<Example2 client:idle />

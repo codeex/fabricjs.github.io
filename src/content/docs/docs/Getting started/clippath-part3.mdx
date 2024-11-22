@@ -1,0 +1,20 @@
+---
+date: 2018-07-07
+description: 剪裁画布
+title: 简介：9.剪裁画布
+---
+import { Example1, Example2, Example3 } from './clippath-part3/clippath-part3';
+
+我们可以像对对象一样将clipPath应用于StaticCanvas。在这种情况下，clipPath受缩放和平移的影响，与Object.clipPath相反，它位于左上角。
+
+<Example1 client:idle />
+
+与旧的clipTo函数一样，除非您将canvas.controlsAboveOverlay设置为true，否则clipPath也是剪辑控件。
+
+<Example2 client:idle />
+
+### Animating the clipPaths
+
+ClipPath可以像其他任何对象一样设置动画。画布clipPath动画非常有效，而为Object动画时，每次都会使对象缓存无效。
+
+<Example3 client:idle />
